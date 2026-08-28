@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — Mariam Automobile</title>
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Poppins:wght@600;700&family=Inconsolata:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --primary: #3B82F6;
+    --primary-strong: #2563EB;
+    --primary-soft: #EFF6FF;
+    --secondary: #8B5CF6;
+    --success: #16A34A;
+    --success-soft: #DCFCE7;
+    --success-ink: #166534;
+    --warning: #D97706;
+    --warning-soft: #FEF3C7;
+    --warning-ink: #92400E;
+    --danger: #DC2626;
+    --danger-soft: #FEE2E2;
+    --danger-ink: #991B1B;
+    --surface: #FFFFFF;
+    --canvas: #F6F8FB;
+    --text: #111827;
+    --text-2: #4B5563;
+    --text-3: #6B7280;
+    --line: #E5E7EB;
+    --line-soft: #F3F4F6;
+    --focus: #93C5FD;
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-lg: 12px;
+    --font: "Roboto", system-ui, sans-serif;
+    --font-display: "Poppins", sans-serif;
+    --font-mono: "Inconsolata", monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--canvas);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  [hidden] { display: none !important; }
+
+  /* ---------- layout ---------- */
+  .app {
+    display: grid;
+    grid-template-columns: 248px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+  }
+
+  .brand .mark {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-md);
+    background: var(--primary);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    flex: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .brand b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  .brand span {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .nav { display: grid; gap: 4px; }
+
+  .nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: var(--r-md);
+    color: var(--text-2);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    min-height: 44px;
+  }
+
+  .nav a:hover { background: var(--line-soft); color: var(--text); text-decoration: none; }
+
+  .nav a.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .nav a svg { width: 18px; height: 18px; flex: none; }
+
+  .nav .lbl {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding: 16px 12px 8px;
+  }
+
+  .side-foot {
+    margin-top: auto;
+    display: grid;
+    gap: 4px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 16px;
+  }
+
+  .side-foot a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: var(--r-md);
+    color: var(--text-2);
+    font-weight: 500;
+    min-height: 44px;
+  }
+
+  .side-foot a:hover { background: var(--line-soft); color: var(--text); text-decoration: none; }
+  .side-foot a svg { width: 18px; height: 18px; flex: none; }
+
+  /* ---------- main ---------- */
+  .main {
+    padding: 32px 40px 64px;
+    max-width: 1160px;
+    width: 100%;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .topbar h1 { font-size: 24px; }
+  .topbar .crumb { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+
+  .top-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    min-height: 40px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .btn:hover { background: var(--line-soft); text-decoration: none; }
+  .btn:active { transform: translateY(1px); }
+
+  .btn svg { width: 16px; height: 16px; flex: none; }
+
+  .btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: var(--primary-strong); border-color: var(--primary-strong); }
+
+  .btn-danger {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+  }
+
+  .btn-danger:hover { background: #B91C1C; border-color: #B91C1C; }
+
+  .btn-sm { padding: 6px 10px; min-height: 32px; font-size: 13px; }
+
+  .ibtn {
+    width: 36px;
+    height: 36px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: var(--r-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .ibtn:hover { background: var(--line-soft); color: var(--text); }
+  .ibtn.danger:hover { background: var(--danger-soft); color: var(--danger-ink); border-color: var(--danger-soft); }
+  .ibtn svg { width: 16px; height: 16px; }
+
+  /* ---------- cards / stats ---------- */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 20px;
+  }
+
+  .stat .n {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .stat .n small { font-size: 16px; color: var(--text-3); font-weight: 600; }
+
+  .stat .l {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .stat.accent .n { color: var(--primary); }
+  .stat.ok .n { color: var(--success); }
+  .stat.warn .n { color: var(--warning); }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .card-head h2 { font-size: 17px; }
+  .card-head p { font-size: 13px; color: var(--text-3); }
+
+  .card + .card { margin-top: 16px; }
+
+  /* ---------- pills ---------- */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .pill.ok { background: var(--success-soft); color: var(--success-ink); }
+  .pill.warn { background: var(--warning-soft); color: var(--warning-ink); }
+  .pill.bad { background: var(--danger-soft); color: var(--danger-ink); }
+  .pill.info { background: var(--primary-soft); color: var(--primary); }
+
+  /* ---------- table ---------- */
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    font-weight: 700;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: middle;
+    font-size: 14px;
+  }
+
+  tr:last-child td { border-bottom: 0; }
+  tr:hover td { background: #FAFBFC; }
+
+  .car-cell { display: flex; align-items: center; gap: 12px; min-width: 220px; }
+
+  .thumb {
+    width: 56px;
+    height: 42px;
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    background: #E8EDF3;
+    flex: none;
+    display: grid;
+    place-items: center;
+    color: var(--text-3);
+  }
+
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .car-cell b { display: block; font-size: 14px; }
+  .car-cell span { display: block; font-size: 12.5px; color: var(--text-3); }
+
+  .price { font-family: var(--font-mono); font-weight: 700; white-space: nowrap; }
+
+  .actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+  /* ---------- switch ---------- */
+  .switch { position: relative; display: inline-block; width: 40px; height: 22px; flex: none; }
+  .switch input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .switch .track {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #D1D5DB;
+    border-radius: 999px;
+    transition: background 0.2s;
+    pointer-events: none;
+  }
+  .switch .track::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s;
+  }
+  .switch input:checked + .track { background: var(--primary); }
+  .switch input:checked + .track::after { transform: translateX(18px); }
+  .switch input:focus-visible + .track { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .switch input:disabled { cursor: not-allowed; }
+  .switch input:disabled + .track { opacity: 0.45; }
+
+  /* ---------- forms ---------- */
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 6px;
+  }
+
+  .field label .req { color: var(--danger); }
+  .field .hint { font-size: 12px; color: var(--text-3); margin-top: 4px; font-weight: 400; }
+
+  input[type="text"], input[type="number"], input[type="search"], select, textarea {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid #D1D5DB;
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    min-height: 40px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  textarea { min-height: 84px; resize: vertical; line-height: 1.55; }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  input::placeholder, textarea::placeholder { color: #9CA3AF; }
+
+  input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: #FAFBFC;
+    font-weight: 500;
+    min-height: 44px;
+  }
+
+  .check-row .grow { flex: 1; }
+  .check-row .sub { display: block; font-size: 12px; color: var(--text-3); font-weight: 400; }
+
+  /* list editors */
+  .rows { display: grid; gap: 10px; }
+
+  .row-box {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 14px;
+    background: #FAFBFC;
+    display: grid;
+    gap: 10px;
+  }
+
+  .row-line { display: flex; align-items: center; gap: 10px; }
+  .row-line input { flex: 1; }
+  .row-box .meta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .add-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px dashed #C7CDD6;
+    border-radius: var(--r-md);
+    color: var(--text-2);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 14px;
+    cursor: pointer;
+    min-height: 40px;
+  }
+
+  .add-row:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+  .add-row svg { width: 15px; height: 15px; }
+
+  /* ---------- homepage slots ---------- */
+  .slots { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+
+  .slot {
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 14px 12px;
+    background: #FAFBFC;
+    min-height: 88px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .slot .no {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .slot b { font-size: 13px; line-height: 1.35; }
+  .slot span { font-size: 11.5px; color: var(--text-3); display: block; }
+
+  .slot.filled { border-color: #BFDBFE; background: var(--primary-soft); }
+  .slot.filled .no { color: var(--primary); }
+  .slot.empty { border-style: dashed; }
+
+  /* ---------- notes / empty ---------- */
+  .note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--primary-soft);
+    border: 1px solid #BFDBFE;
+    border-radius: var(--r-md);
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #1E40AF;
+    margin-bottom: 20px;
+  }
+
+  .note svg { width: 16px; height: 16px; flex: none; margin-top: 2px; }
+
+  .empty {
+    border: 1px dashed var(--line);
+    border-radius: var(--r-lg);
+    padding: 48px 24px;
+    text-align: center;
+    background: var(--surface);
+  }
+
+  .empty h3 { font-size: 17px; margin-bottom: 8px; }
+  .empty p { color: var(--text-3); font-size: 14px; max-width: 380px; margin: 0 auto 18px; }
+
+  /* ---------- toolbar ---------- */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .toolbar .left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .search {
+    position: relative;
+    width: 260px;
+  }
+
+  .search svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: var(--text-3);
+    pointer-events: none;
+  }
+
+  .search input { padding-left: 36px; }
+
+  select.inline { width: auto; min-width: 150px; }
+
+  .home-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 14px;
+    white-space: nowrap;
+  }
+
+  .home-count b { color: var(--primary); }
+
+  /* ---------- toast ---------- */
+  .toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--text);
+    color: #fff;
+    border-radius: var(--r-md);
+    padding: 13px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.45);
+    transform: translateY(80px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s;
+    max-width: min(420px, calc(100vw - 48px));
+  }
+
+  .toast.show { transform: none; opacity: 1; }
+  .toast svg { width: 17px; height: 17px; flex: none; }
+  .toast.ok svg { color: #4ADE80; }
+  .toast.err svg { color: #FCA5A5; }
+
+  /* ---------- misc ---------- */
+  .divider { height: 1px; background: var(--line); margin: 24px 0; border: 0; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 20px;
+  }
+
+  .back-link:hover { color: var(--primary); text-decoration: none; }
+  .back-link svg { width: 15px; height: 15px; }
+
+  .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  .quick {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 18px;
+    color: var(--text);
+    font-weight: 600;
+    min-height: 44px;
+  }
+
+  .quick:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+
+  .quick .ic {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-md);
+    background: var(--primary-soft);
+    color: var(--primary);
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+
+  .quick .ic svg { width: 19px; height: 19px; }
+  .quick span { display: block; font-size: 12.5px; color: var(--text-3); font-weight: 400; }
+
+  .recent-list { display: grid; gap: 2px; }
+
+  .recent-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    border-radius: var(--r-md);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .recent-item:hover { background: var(--line-soft); text-decoration: none; }
+  .recent-item b { display: block; font-size: 14px; }
+  .recent-item span { font-size: 12.5px; color: var(--text-3); }
+  .recent-item .thumb { width: 44px; height: 34px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 980px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar {
+      position: static;
+      height: auto;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      padding: 12px 16px;
+    }
+    .nav { display: flex; flex-wrap: wrap; gap: 4px; }
+    .nav .lbl { display: none; }
+    .nav a { min-height: 40px; padding: 8px 10px; }
+    .side-foot { display: none; }
+    .main { padding: 24px 20px 56px; }
+    .form-grid, .grid-2, .quick-grid { grid-template-columns: 1fr; }
+    .slots { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 560px) {
+    .slots { grid-template-columns: repeat(2, 1fr); }
+    .search { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <a class="brand" href="#dashboard" data-nav="dashboard" style="color:var(--text);text-decoration:none">
+      <span class="mark">M</span>
+      <span>
+        <b>Mariam Automobile</b>
+        <span>Admin panel</span>
+      </span>
+    </a>
+
+    <nav class="nav">
+      <span class="lbl">Manage</span>
+      <a href="#dashboard" data-nav="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#cars" data-nav="cars">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="7" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>
+        Cars
+      </a>
+
+      <span class="lbl">Site content</span>
+      <a href="#home" data-nav="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        Homepage
+      </a>
+      <a href="#settings" data-nav="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="side-foot">
+      <a href="index.html" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+        View site
+      </a>
+      <a href="#" id="resetBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset demo data
+      </a>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+
+    <!-- ============ DASHBOARD ============ -->
+    <section id="view-dashboard">
+      <div class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <div class="crumb" id="today"></div>
+        </div>
+        <div class="top-actions">
+          <a class="btn" href="index.html" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+            View site
+          </a>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card stat accent">
+          <div class="n" id="dTotal">0</div>
+          <div class="l">Total cars</div>
+        </div>
+        <div class="card stat ok">
+          <div class="n" id="dAvailable">0</div>
+          <div class="l">Available now</div>
+        </div>
+        <div class="card stat warn">
+          <div class="n" id="dSold">0</div>
+          <div class="l">Sold / reserved</div>
+        </div>
+        <div class="card stat">
+          <div class="n"><span id="dHomeN">0</span><small>/6</small></div>
+          <div class="l">Homepage slots used</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Homepage slots</h2>
+            <p>The homepage shows exactly 6 cars. Turn visibility on or off from the Cars page.</p>
+          </div>
+          <a class="btn btn-sm" href="#cars" data-nav="cars">Manage cars</a>
+        </div>
+        <div class="slots" id="dSlots"></div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Quick actions</h2>
+              <p>Common tasks, one click away.</p>
+            </div>
+          </div>
+          <div class="quick-grid" style="grid-template-columns:1fr">
+            <a class="quick" href="#cars" id="dAddCar">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+              <span>Add a new car<span>Opens the full car form</span></span>
+            </a>
+            <a class="quick" href="#home" data-nav="home">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span>
+              <span>Edit homepage content<span>Hero, sections, FAQ</span></span>
+            </a>
+            <a class="quick" href="#settings" data-nav="settings">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+              <span>Site settings<span>Phone, WhatsApp, hours</span></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Recently added</h2>
+              <p>Latest cars in the database.</p>
+            </div>
+          </div>
+          <div class="recent-list" id="dRecent"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CARS ============ -->
+    <section id="view-cars" hidden>
+      <div class="topbar">
+        <div>
+          <h1>Cars</h1>
+          <div class="crumb">Add, edit, delete and control homepage visibility of every car.</div>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-primary" id="addCarBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Add car
+          </button>
+        </div>
+      </div>
+
+      <div class="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+        The cars page shows <b>&nbsp;every&nbsp;</b> car automatically, with filters built from model, body type, year and price. The homepage shows only cars with the "Home" switch on (max 6).
+      </div>
+
+      <div class="toolbar">
+        <div class="left">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="search" id="carSearch" placeholder="Search by name, brand, model…" aria-label="Search cars" />
+          </div>
+          <select id="carFilter" class="inline" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="available">Available</option>
+            <option value="reserved">Reserved</option>
+            <option value="sold">Sold</option>
+          </select>
+        </div>
+        <span class="home-count"><b id="homeCount">0</b>/6 on homepage</span>
+      </div>
+
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Car</th>
+                <th>Year</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th style="text-align:center">Home</th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="carRows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="carsEmpty" hidden>
+          <h3>No cars match</h3>
+          <p>Try a different search or filter — or add a new car to get started.</p>
+          <button class="btn btn-primary" id="emptyAddBtn">Add car</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CAR FORM ============ -->
+    <section id="view-carform" hidden>
+      <a class="back-link" href="#cars" data-nav="cars">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to cars
+      </a>
+
+      <div class="topbar" style="margin-bottom:24px">
+        <div>
+          <h1 id="formTitle">Add car</h1>
+          <div class="crumb">Fields marked <span style="color:var(--danger)">*</span> are required. Everything else is optional.</div>
+        </div>
+        <div class="top-actions">
+          <button class="btn" id="cancelCarBtn">Cancel</button>
+          <button class="btn btn-primary" id="saveCarBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+            Save car
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Identity</h2>
+            <p>What this car is called on the site.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-title">Display title <span class="req">*</span></label>
+            <input type="text" id="f-title" placeholder="e.g. Corolla Cross Z" />
+            <div class="hint">Shown as the heading on the car page.</div>
+          </div>
+          <div class="field">
+            <label for="f-brand">Brand <span class="req">*</span></label>
+            <input type="text" id="f-brand" placeholder="Toyota" />
+          </div>
+          <div class="field">
+            <label for="f-model">Model <span class="req">*</span></label>
+            <input type="text" id="f-model" placeholder="Corolla Cross" />
+            <div class="hint">Used by the search box and filters.</div>
+          </div>
+          <div class="field">
+            <label for="f-grade">Grade / package</label>
+            <input type="text" id="f-grade" placeholder="Z Package" />
+          </div>
+          <div class="field">
+            <label for="f-year">Registration year <span class="req">*</span></label>
+            <input type="number" id="f-year" min="1990" max="2030" placeholder="2023" />
+          </div>
+          <div class="field">
+            <label for="f-slug">URL slug</label>
+            <input type="text" id="f-slug" placeholder="corolla-cross-z-2023" />
+            <div class="hint">Generated automatically — leave blank when adding.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Specifications</h2>
+            <p>Shown in the key-spec cards and the full spec table.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-body">Body type</label>
+            <select id="f-body">
+              <option>SUV</option><option>Sedan</option><option>Hatchback</option>
+              <option>MPV</option><option>Pickup</option><option>Coupe</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-fuel">Fuel type</label>
+            <select id="f-fuel">
+              <option>Hybrid</option><option>Petrol</option><option>Diesel</option><option>Electric</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-trans">Transmission</label>
+            <select id="f-trans">
+              <option>Automatic</option><option>CVT</option><option>Manual</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-drive">Drivetrain</label>
+            <select id="f-drive">
+              <option>2WD</option><option>4WD</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-engine">Engine</label>
+            <input type="text" id="f-engine" placeholder="1798 cc" />
+          </div>
+          <div class="field">
+            <label for="f-mileage">Mileage</label>
+            <input type="text" id="f-mileage" placeholder="12,400 km" />
+          </div>
+          <div class="field">
+            <label for="f-seats">Seats</label>
+            <input type="number" id="f-seats" min="2" max="12" placeholder="5" />
+          </div>
+          <div class="field">
+            <label for="f-color">Colour</label>
+            <input type="text" id="f-color" placeholder="Platinum White Pearl" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Sourcing &amp; condition</h2>
+            <p>Everything about the auction sheet and registration.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-condition">Condition</label>
+            <select id="f-condition">
+              <option>Recondition</option><option>New</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-auction">Auction grade</label>
+            <input type="text" id="f-auction" placeholder="Grade 4.5 / B" />
+          </div>
+          <div class="field full">
+            <label for="f-reg">Registration status</label>
+            <input type="text" id="f-reg" placeholder="Fresh registration" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Pricing &amp; visibility</h2>
+            <p>Where this car appears across the site.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-price">Price in Taka <span class="req">*</span></label>
+            <input type="number" id="f-price" min="0" step="50000" placeholder="4850000" />
+            <div class="hint">Formatted as lakhs automatically (৳ 48,50,000).</div>
+          </div>
+          <div class="field">
+            <label for="f-status">Status</label>
+            <select id="f-status">
+              <option value="available">Available</option>
+              <option value="reserved">Reserved</option>
+              <option value="sold">Sold</option>
+            </select>
+            <div class="hint">Sold cars stay in the archive and disappear from listings.</div>
+          </div>
+          <div class="field full">
+            <label class="check-row">
+              <input type="checkbox" id="f-featured" />
+              <span class="grow">Featured — "Our pick"
+                <span class="sub">Shows the red "Our pick" badge and sorts this car first.</span>
+              </span>
+            </label>
+          </div>
+          <div class="field full">
+            <label class="check-row">
+              <span class="switch"><input type="checkbox" id="f-home" /><span class="track"></span></span>
+              <span class="grow">Show on homepage
+                <span class="sub">The homepage has 6 slots. You can enable a maximum of 6 cars.</span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Photos</h2>
+            <p>First photo is the cover. Paste image URLs or upload keys for now — file upload arrives with the backend.</p>
+          </div>
+        </div>
+        <div class="rows" id="photoRows"></div>
+        <button type="button" class="add-row" id="addPhotoBtn" style="margin-top:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add photo
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Content</h2>
+            <p>What buyers read on the card and the detail page.</p>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-tagline">Tagline (card subtitle)</label>
+          <textarea id="f-tagline" placeholder="One or two lines shown under the title on the cars page."></textarea>
+        </div>
+        <div class="field">
+          <label for="f-about">About this car</label>
+          <textarea id="f-about" style="min-height:120px" placeholder="The full description on the car detail page."></textarea>
+        </div>
+        <div class="field">
+          <label>Equipment / features</label>
+          <div class="rows" id="featRows"></div>
+          <button type="button" class="add-row" id="addFeatBtn" style="margin-top:12px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Add feature
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOMEPAGE ============ -->
+    <section id="view-home" hidden>
+      <div class="topbar">
+        <div>
+          <h1>Homepage content</h1>
+          <div class="crumb">Text blocks shown on index.html. Save to apply (demo stores locally).</div>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-primary" id="saveHomeBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+            Save homepage
+          </button>
+        </div>
+      </div>
+
+      <!-- hero -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Hero</h2>
+            <p>The first screen visitors see.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="h-hero-kicker">Kicker</label>
+            <input type="text" id="h-hero-kicker" />
+          </div>
+          <div class="field">
+            <label for="h-hero-l1">Title line 1</label>
+            <input type="text" id="h-hero-l1" />
+          </div>
+          <div class="field">
+            <label for="h-hero-l2">Title line 2</label>
+            <input type="text" id="h-hero-l2" />
+          </div>
+          <div class="field">
+            <label for="h-hero-l3">Title line 3</label>
+            <input type="text" id="h-hero-l3" />
+          </div>
+          <div class="field">
+            <label for="h-hero-lede">Intro paragraph</label>
+            <textarea id="h-hero-lede"></textarea>
+          </div>
+          <div class="field">
+            <label for="h-hero-cta1">Primary button label</label>
+            <input type="text" id="h-hero-cta1" />
+          </div>
+          <div class="field">
+            <label for="h-hero-cta2">Secondary button label</label>
+            <input type="text" id="h-hero-cta2" />
+          </div>
+          <div class="field full">
+            <label>Assurance points (checkmarks under the buttons)</label>
+            <div class="rows" id="hAssureRows"></div>
+            <button type="button" class="add-row" data-add="assure" style="margin-top:12px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Add point
+            </button>
+          </div>
+          <div class="field">
+            <label for="h-lead-title">Lead form heading</label>
+            <input type="text" id="h-lead-title" />
+          </div>
+          <div class="field">
+            <label for="h-lead-sub">Lead form subtitle</label>
+            <input type="text" id="h-lead-sub" />
+          </div>
+        </div>
+        <div class="field" style="margin-top:8px">
+          <label>Stats rail (4 cells under the hero)</label>
+          <div class="rows" id="hStatRows"></div>
+          <button type="button" class="add-row" data-add="stat" style="margin-top:12px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Add stat
+          </button>
+        </div>
+      </div>
+
+      <!-- trust strip -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Trust strip</h2>
+            <p>The scrolling ribbon directly under the hero.</p>
+          </div>
+        </div>
+        <div class="rows" id="hTrustRows"></div>
+        <button type="button" class="add-row" data-add="trust" style="margin-top:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add item
+        </button>
+      </div>
+
+      <!-- inventory -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Inventory section</h2>
+            <p>Heading above the 6 homepage cars. The car count updates automatically.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="h-inv-kicker">Kicker</label>
+            <input type="text" id="h-inv-kicker" />
+          </div>
+          <div class="field">
+            <label for="h-inv-title">Heading</label>
+            <input type="text" id="h-inv-title" />
+          </div>
+          <div class="field full">
+            <label for="h-inv-sub">Intro paragraph</label>
+            <textarea id="h-inv-sub"></textarea>
+          </div>
+          <div class="field">
+            <label for="h-inv-note-title">Bottom note heading</label>
+            <input type="text" id="h-inv-note-title" />
+          </div>
+          <div class="field">
+            <label for="h-inv-note-btn">Bottom note button</label>
+            <input type="text" id="h-inv-note-btn" />
+          </div>
+          <div class="field full">
+            <label for="h-inv-note-text">Bottom note text</label>
+            <textarea id="h-inv-note-text"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- process -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>How it works (4 steps)</h2>
+            <p>The scroll-driven road journey section.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="h-proc-kicker">Kicker</label>
+            <input type="text" id="h-proc-kicker" />
+          </div>
+          <div class="field">
+            <label for="h-proc-title">Heading</label>
+            <input type="text" id="h-proc-title" />
+          </div>
+          <div class="field full">
+            <label for="h-proc-sub">Intro paragraph</label>
+            <textarea id="h-proc-sub"></textarea>
+          </div>
+        </div>
+        <div class="rows" id="hProcRows"></div>
+      </div>
+
+      <!-- faq -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>FAQ</h2>
+            <p>Questions and answers shown in the accordion.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="h-faq-kicker">Kicker</label>
+            <input type="text" id="h-faq-kicker" />
+          </div>
+          <div class="field">
+            <label for="h-faq-title">Heading</label>
+            <input type="text" id="h-faq-title" />
+          </div>
+        </div>
+        <div class="rows" id="hFaqRows"></div>
+        <button type="button" class="add-row" data-add="faq" style="margin-top:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add question
+        </button>
+      </div>
+
+      <!-- cta band -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Call-to-action band</h2>
+            <p>The dark "ready when you are" section before the footer.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="h-cta-kicker">Kicker</label>
+            <input type="text" id="h-cta-kicker" />
+          </div>
+          <div class="field">
+            <label for="h-cta-title">Heading</label>
+            <input type="text" id="h-cta-title" />
+          </div>
+          <div class="field">
+            <label for="h-cta-btn1">Primary button</label>
+            <input type="text" id="h-cta-btn1" />
+          </div>
+          <div class="field">
+            <label for="h-cta-btn2">Secondary button</label>
+            <input type="text" id="h-cta-btn2" />
+          </div>
+          <div class="field full">
+            <label for="h-cta-text">Paragraph</label>
+            <textarea id="h-cta-text"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- contact -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Contact section</h2>
+            <p>Heading block of the contact card. Phone, address and hours live in Settings.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="h-con-kicker">Kicker</label>
+            <input type="text" id="h-con-kicker" />
+          </div>
+          <div class="field">
+            <label for="h-con-title">Heading</label>
+            <input type="text" id="h-con-title" />
+          </div>
+          <div class="field full">
+            <label for="h-con-intro">Intro paragraph</label>
+            <textarea id="h-con-intro"></textarea>
+          </div>
+          <div class="field full">
+            <label for="h-con-status">Open-now status text</label>
+            <input type="text" id="h-con-status" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section id="view-settings" hidden>
+      <div class="topbar">
+        <div>
+          <h1>Settings</h1>
+          <div class="crumb">Shared across every page: nav, footer, WhatsApp buttons.</div>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-primary" id="saveSettingsBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+            Save settings
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Contact details</h2>
+            <p>Used in the navigation bar, footer, contact section and every WhatsApp button.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="s-phone">Phone number</label>
+            <input type="text" id="s-phone" placeholder="01944755111" />
+          </div>
+          <div class="field">
+            <label for="s-wa">WhatsApp number</label>
+            <input type="text" id="s-wa" placeholder="8801944755111" />
+            <div class="hint">International format, no + sign.</div>
+          </div>
+          <div class="field full">
+            <label for="s-address">Showroom address</label>
+            <input type="text" id="s-address" />
+          </div>
+          <div class="field">
+            <label for="s-h-week">Business hours — Sat to Thu</label>
+            <input type="text" id="s-h-week" placeholder="9:00 AM – 8:00 PM" />
+          </div>
+          <div class="field">
+            <label for="s-h-fri">Business hours — Friday</label>
+            <input type="text" id="s-h-fri" placeholder="2:00 PM – 8:00 PM" />
+          </div>
+          <div class="field full">
+            <label for="s-emergency">Emergency note</label>
+            <input type="text" id="s-emergency" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+
+  /* ================= sample data (mirrors the site) ================= */
+  var DEFAULT_DB = {
+    cars: [
+      { id: "corolla-cross-z-2023", title: "Corolla Cross Z", brand: "Toyota", model: "Corolla Cross", grade: "Z Package", year: 2023, body: "SUV", fuel: "Hybrid", transmission: "Automatic", drive: "2WD", engine: "1798 cc", mileage: "12,400 km", seats: 5, color: "Platinum White Pearl", condition: "Recondition", auction: "Grade 4.5 / B", reg: "Fresh registration", price: 4850000, featured: true, status: "available", showHome: true, photos: ["cross_wet", "cross_show", "interior"], tagline: "Top-grade Corolla Cross with full aero kit, panoramic roof and genuinely low mileage.", about: "This is the flagship Z grade, the one buyers ask for by name. It came out of the auction with a complete aero kit already fitted, a panoramic roof and the hybrid drivetrain that returns real economy in Rajshahi traffic.", features: ["Full aero body kit", "Panoramic glass roof", "Toyota Safety Sense", "360° camera system"] },
+      { id: "corolla-cross-s-2022", title: "Corolla Cross S Package", brand: "Toyota", model: "Corolla Cross", grade: "S Package", year: 2022, body: "SUV", fuel: "Hybrid", transmission: "Automatic", drive: "2WD", engine: "1798 cc", mileage: "28,900 km", seats: 5, color: "White with black roof", condition: "Recondition", auction: "Grade 4 / B", reg: "Fresh registration", price: 4250000, featured: false, status: "available", showHome: true, photos: ["cross_show", "cross_wet", "interior"], tagline: "Same platform and hybrid engine as the Z, several lakh less. The sensible buy.", about: "The S Package sits one step below the Z but keeps almost everything you actually use day to day: the body kit, the camera system and the black contrast roof.", features: ["Front and rear aero kit", "Black contrast roof", "Reverse camera"] },
+      { id: "chr-red-wine-2020", title: "C-HR Hybrid — Red Wine", brand: "Toyota", model: "C-HR", grade: "G", year: 2020, body: "SUV", fuel: "Hybrid", transmission: "Automatic", drive: "2WD", engine: "1797 cc", mileage: "41,200 km", seats: 5, color: "Red Wine", condition: "Recondition", auction: "Grade 4 / B", reg: "Fresh registration", price: 2950000, featured: false, status: "available", showHome: true, photos: ["chr_red"], tagline: "Sporty hybrid crossover in a standout red-wine colour, ideal for city driving.", about: "The C-HR turns heads wherever it goes, and the hybrid drivetrain keeps running costs genuinely low in city traffic.", features: ["Hybrid", "Panoramic roof", "Alloy wheels"] },
+      { id: "premo-f-ex-2020", title: "Premio F EX PKG", brand: "Toyota", model: "Premio", grade: "F EX Package", year: 2020, body: "Sedan", fuel: "Petrol", transmission: "Automatic", drive: "2WD", engine: "1496 cc", mileage: "35,800 km", seats: 5, color: "Pearl White", condition: "Recondition", auction: "Grade 4 / C", reg: "Fresh registration", price: 2350000, featured: false, status: "available", showHome: true, photos: ["premio_pearl"], tagline: "Premium Toyota sedan in an elegant pearl finish — comfortable for family and daily executive use.", about: "The Premio is the comfortable executive sedan of choice in Bangladesh — refined, quiet and cheap to run.", features: ["F EX Package", "Multimedia system", "Pearl"] },
+      { id: "yaris-cross-z-2020", title: "Yaris Cross Z Leather", brand: "Toyota", model: "Yaris Cross", grade: "Z Leather", year: 2020, body: "SUV", fuel: "Hybrid", transmission: "Automatic", drive: "2WD", engine: "1490 cc", mileage: "29,400 km", seats: 5, color: "Two-tone white / black", condition: "Recondition", auction: "Grade 4.5 / B", reg: "Fresh registration", price: 3350000, featured: false, status: "reserved", showHome: true, photos: ["yaris_cross"], tagline: "Modern compact SUV with premium Z Leather trim — comfort, efficiency and practicality.", about: "The Yaris Cross Z Leather brings the premium touches of a much bigger SUV into a compact, easy-to-park package.", features: ["Z Leather grade", "Two-tone roof", "Compact SUV"] },
+      { id: "corolla-cross-g-2021", title: "Corolla Cross G", brand: "Toyota", model: "Corolla Cross", grade: "G", year: 2021, body: "SUV", fuel: "Hybrid", transmission: "Automatic", drive: "2WD", engine: "1798 cc", mileage: "33,000 km", seats: 5, color: "Silver Metallic", condition: "Recondition", auction: "Grade 4 / B", reg: "Fresh registration", price: 3750000, featured: false, status: "sold", showHome: false, photos: ["cross_g"], tagline: "Well-kept Corolla Cross G with verified low mileage and clean auction sheet.", about: "This unit is sold — kept in the archive for reference. Mark it available again from the Cars page.", features: ["Hybrid", "Reverse camera", "Cruise control"] }
+    ],
+    home: {
+      hero: {
+        kicker: "Rajshahi · Bangladesh",
+        line1: "Japan Recondition",
+        line2: "& New Cars",
+        line3: "Sales Center",
+        lede: "Hand-picked Japanese vehicles, auction-verified and fully inspected. Bank loan or cash — we handle import, registration and after-sales, start to finish.",
+        cta1: "View Available Cars",
+        cta2: "Ask on WhatsApp",
+        assures: ["Auction sheet on request", "Bank loan support", "Warranty included"],
+        leadTitle: "Get your price today",
+        leadSub: "Tell us what you're after — we'll reply with options and full pricing.",
+        stats: [
+          { n: "500", suffix: "+", label: "Cars Sold" },
+          { n: "10", suffix: "+", label: "Years Experience" },
+          { n: "100", suffix: "%", label: "Satisfied Customers" },
+          { n: "24", suffix: "/", label: "7 Customer Support" }
+        ]
+      },
+      trust: ["Auction-verified vehicles", "Bank loan facility", "Cash purchase discounts", "Warranty included", "Import & registration handled", "After-sales support", "Trade-in valuations", "Custom car sourcing"],
+      inventory: {
+        kicker: "Available cars",
+        title: "In stock right now",
+        sub: "Every unit is hand-selected from Japanese auctions, thoroughly inspected, and delivered with warranty. Photos are of the actual vehicles.",
+        noteTitle: "Looking for a specific model?",
+        noteText: "Tell us the model, grade, year and budget — we source it directly from Japanese auctions and quote you the full landed cost before you commit.",
+        noteBtn: "Request a custom order"
+      },
+      process: {
+        kicker: "How it works",
+        title: "From auction to your driveway",
+        sub: "Four steps, no surprises. Scroll to take the drive — you'll know the cost, condition and timeline before any money moves.",
+        steps: [
+          { title: "Choose your car", text: "Pick from ready stock in Rajshahi, or tell us the exact model and grade to source from Japan." },
+          { title: "Verify the condition", text: "Review the auction sheet and inspection report, then see the car in person at our showroom." },
+          { title: "Choose how to pay", text: "Cash for a better price, or let us arrange bank financing with quick approval." },
+          { title: "Drive it home", text: "We handle registration and hand over the keys — with warranty and after-sales support." }
+        ]
+      },
+      faq: {
+        kicker: "Questions, answered",
+        title: "What buyers ask us most",
+        items: [
+          { q: "What exactly is a \"reconditioned\" car?", a: "A used Japanese vehicle imported after passing a strict auction inspection, then refurbished and registered locally." },
+          { q: "Can I see the auction sheet before buying?", a: "Yes — we share the original sheet with every car so you can verify grade, mileage and history yourself." },
+          { q: "Do you help arrange a bank loan?", a: "We work with all major banks in Bangladesh to arrange financing with quick approval." },
+          { q: "Is registration and paperwork included?", a: "We handle import, duty, registration and documentation start to finish." }
+        ]
+      },
+      cta: {
+        kicker: "Ready when you are",
+        title: "Let's find the right car for you",
+        text: "Walk in for a test drive, or message us for the auction sheet of any car you like.",
+        btn1: "Browse available cars",
+        btn2: "WhatsApp us"
+      },
+      contact: {
+        kicker: "Contact us",
+        title: "Come in, or just message us",
+        intro: "Our showroom in Terokhadia is open six days a week. The coffee is on us.",
+        status: "Open today"
+      }
+    },
+    settings: {
+      phone: "01944755111",
+      wa: "8801944755111",
+      address: "Terokhadia, Rajshahi-6000, Bangladesh",
+      hoursWeek: "9:00 AM – 8:00 PM",
+      hoursFri: "2:00 PM – 8:00 PM",
+      emergency: "Emergency 24/7 via WhatsApp"
+    }
+  };
+
+  var LS_KEY = "mariam_auto_admin_v1";
+  var HOME_LIMIT = 6;
+
+  function loadDB() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (d && d.cars && d.home && d.settings) return d;
+      }
+    } catch (e) { /* corrupted storage — fall through */ }
+    return JSON.parse(JSON.stringify(DEFAULT_DB));
+  }
+
+  var DB = loadDB();
+
+  function saveDB() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(DB)); } catch (e) { /* storage full/blocked */ }
+  }
+
+  /* ================= helpers ================= */
+  function $(id) { return document.getElementById(id); }
+
+  function bdt(n) {
+    n = Math.round(Number(n) || 0);
+    var s = String(n);
+    if (s.length <= 3) return s;
+    var last3 = s.slice(-3);
+    var rest = s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+    return rest + "," + last3;
+  }
+
+  function lakh(n) { return "৳ " + bdt(n); }
+
+  function slugify(s) {
+    return String(s).toLowerCase().trim()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function thumbHTML(car) {
+    var p = (car.photos && car.photos[0]) || "";
+    if (/^(https?:\/\/|data:)/.test(p)) {
+      return '<span class="thumb"><img src="' + esc(p) + '" alt="" /></span>';
+    }
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 42"><rect width="56" height="42" fill="#DCE3EC"/><text x="28" y="25" fill="#6B7280" font-family="sans-serif" font-size="9" font-weight="700" text-anchor="middle">' + esc(car.brand) + '</text></svg>';
+    return '<span class="thumb">' + svg + '</span>';
+  }
+
+  var STATUS_META = {
+    available: { pill: "ok", label: "Available" },
+    reserved: { pill: "warn", label: "Reserved" },
+    sold: { pill: "bad", label: "Sold" }
+  };
+
+  /* ================= toast ================= */
+  var toastTimer = null;
+  function toast(msg, type) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.className = "toast show " + (type || "ok");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2600);
+  }
+
+  /* ================= navigation ================= */
+  var VIEWS = ["dashboard", "cars", "carform", "home", "settings"];
+  var VIEW_TITLES = {
+    dashboard: "Dashboard",
+    cars: "Cars",
+    carform: "Car details",
+    home: "Homepage content",
+    settings: "Settings"
+  };
+
+  function showView(name) {
+    VIEWS.forEach(function (v) {
+      var el = $("view-" + v);
+      if (el) el.hidden = (v !== name);
+    });
+    document.querySelectorAll(".nav a[data-nav]").forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("data-nav") === name);
+    });
+    if (name === "dashboard") renderDashboard();
+    if (name === "cars") renderCars();
+    if (name === "home") renderHome();
+    if (name === "settings") renderSettings();
+    window.scrollTo({ top: 0 });
+  }
+
+  function route() {
+    var h = window.location.hash.replace("#", "") || "dashboard";
+    if (h === "carform" && !editingCar) h = "cars";
+    showView(VIEWS.indexOf(h) > -1 ? h : "dashboard");
+  }
+
+  document.querySelectorAll("[data-nav]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      window.location.hash = a.getAttribute("data-nav");
+      route();
+    });
+  });
+
+  window.addEventListener("hashchange", route);
+
+  /* ================= dashboard ================= */
+  function renderDashboard() {
+    var total = DB.cars.length;
+    var avail = DB.cars.filter(function (c) { return c.status === "available"; }).length;
+    var sold = total - avail;
+    var onHome = DB.cars.filter(function (c) { return c.showHome; });
+
+    $("dTotal").textContent = total;
+    $("dAvailable").textContent = avail;
+    $("dSold").textContent = sold;
+    $("dHomeN").textContent = onHome.length;
+
+    $("dSlots").innerHTML = Array.from({ length: HOME_LIMIT }, function (_, i) {
+      var c = onHome[i];
+      if (c) {
+        return '<a class="slot filled" href="#cars" data-nav="cars" title="Edit ' + esc(c.title) + '"><span class="no">Slot 0' + (i + 1) + '</span><b>' + esc(c.title) + '</b><span>' + esc(c.brand) + ' · ' + c.year + '</span></a>';
+      }
+      return '<div class="slot empty"><span class="no">Slot 0' + (i + 1) + '</span><span>Empty — turn on "Home" for a car</span></div>';
+    }).join("");
+
+    var recent = DB.cars.slice(-4).reverse();
+    $("dRecent").innerHTML = recent.map(function (c) {
+      var s = STATUS_META[c.status] || STATUS_META.available;
+      return '<a class="recent-item" href="#cars" data-nav="cars">' + thumbHTML(c) +
+        '<span style="flex:1"><b>' + esc(c.title) + '</b><span>' + esc(c.brand) + ' ' + esc(c.model) + ' · ' + c.year + '</span></span>' +
+        '<span class="pill ' + s.pill + '">' + s.label + '</span></a>';
+    }).join("") || '<p style="color:var(--text-3);font-size:13px">No cars yet — add your first one.</p>';
+
+    var d = new Date();
+    $("today").textContent = d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  }
+
+  /* ================= cars list ================= */
+  var ICON_EDIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
+  var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/></svg>';
+
+  function renderCars() {
+    var q = ($("carSearch").value || "").trim().toLowerCase();
+    var f = $("carFilter").value;
+    var list = DB.cars.filter(function (c) {
+      if (f && c.status !== f) return false;
+      if (q) {
+        var hay = (c.title + " " + c.brand + " " + c.model + " " + c.grade).toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+
+    var onHome = DB.cars.filter(function (c) { return c.showHome; }).length;
+    $("homeCount").textContent = onHome;
+
+    $("carRows").innerHTML = list.map(function (c) {
+      var s = STATUS_META[c.status] || STATUS_META.available;
+      return '<tr>' +
+        '<td><div class="car-cell">' + thumbHTML(c) +
+          '<span><b>' + esc(c.title) + '</b><span>' + esc(c.brand) + ' ' + esc(c.model) + ' · ' + esc(c.grade) + '</span></span></div></td>' +
+        '<td>' + c.year + '</td>' +
+        '<td class="price">' + lakh(c.price) + '</td>' +
+        '<td><span class="pill ' + s.pill + '">' + s.label + '</span></td>' +
+        '<td>' + (c.featured ? '<span class="pill info">Our pick</span>' : '<span style="color:var(--text-3)">—</span>') + '</td>' +
+        '<td style="text-align:center"><label class="switch"><input type="checkbox" data-home="' + esc(c.id) + '"' + (c.showHome ? " checked" : "") + (c.status === "sold" ? " disabled" : "") + ' /><span class="track"></span></label></td>' +
+        '<td><div class="actions">' +
+          '<button class="ibtn" data-edit="' + esc(c.id) + '" aria-label="Edit ' + esc(c.title) + '" title="Edit">' + ICON_EDIT + '</button>' +
+          '<button class="ibtn danger" data-del="' + esc(c.id) + '" aria-label="Delete ' + esc(c.title) + '" title="Delete">' + ICON_TRASH + '</button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join("");
+
+    $("carsEmpty").hidden = list.length > 0;
+  }
+
+  function toggleHome(id, force) {
+    var car = DB.cars.filter(function (c) { return c.id === id; })[0];
+    if (!car) return;
+    var want = (force === undefined) ? !car.showHome : force;
+    if (want) {
+      var n = DB.cars.filter(function (c) { return c.showHome; }).length;
+      if (n >= HOME_LIMIT) {
+        toast("Homepage is limited to " + HOME_LIMIT + " cars. Turn one off first.", "err");
+        return false;
+      }
+    }
+    car.showHome = want;
+    saveDB();
+    return true;
+  }
+
+  /* cars view events (delegated) */
+  $("carRows").addEventListener("click", function (e) {
+    var el = e.target.closest("[data-home], [data-edit], [data-del]");
+    if (!el) return;
+    var id = el.getAttribute("data-home") || el.getAttribute("data-edit") || el.getAttribute("data-del");
+
+    if (el.hasAttribute("data-home")) {
+      var ok = toggleHome(id);
+      if (!ok) { e.preventDefault(); el.checked = false; renderCars(); return; }
+      renderCars();
+      toast("Homepage visibility updated.");
+    }
+    if (el.hasAttribute("data-edit")) { editCar(id); }
+    if (el.hasAttribute("data-del")) {
+      if (!el.classList.contains("confirm")) {
+        el.classList.add("confirm");
+        el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+        el.title = "Click again to confirm delete";
+        setTimeout(function () {
+          if (el.classList.contains("confirm")) {
+            el.classList.remove("confirm");
+            el.innerHTML = ICON_TRASH;
+          }
+        }, 3000);
+        return;
+      }
+      DB.cars = DB.cars.filter(function (c) { return c.id !== id; });
+      saveDB();
+      renderCars();
+      toast("Car deleted.");
+    }
+  });
+
+  $("carSearch").addEventListener("input", renderCars);
+  $("carFilter").addEventListener("change", renderCars);
+
+  /* ================= car form ================= */
+  var editingCar = null;
+
+  function addCar() {
+    editingCar = null;
+    $("formTitle").textContent = "Add car";
+    fillForm({
+      title: "", brand: "", model: "", grade: "", year: new Date().getFullYear(),
+      body: "SUV", fuel: "Hybrid", transmission: "Automatic", drive: "2WD",
+      engine: "", mileage: "", seats: 5, color: "",
+      condition: "Recondition", auction: "", reg: "Fresh registration",
+      price: "", featured: false, status: "available", showHome: false,
+      photos: [""], tagline: "", about: "", features: [""], id: ""
+    });
+    window.location.hash = "carform";
+    route();
+  }
+
+  function editCar(id) {
+    var car = DB.cars.filter(function (c) { return c.id === id; })[0];
+    if (!car) return;
+    editingCar = id;
+    $("formTitle").textContent = "Edit — " + car.title;
+    fillForm(JSON.parse(JSON.stringify(car)));
+    window.location.hash = "carform";
+    route();
+  }
+
+  function fillForm(c) {
+    $("f-title").value = c.title || "";
+    $("f-brand").value = c.brand || "";
+    $("f-model").value = c.model || "";
+    $("f-grade").value = c.grade || "";
+    $("f-year").value = c.year || "";
+    $("f-slug").value = c.id || "";
+    $("f-body").value = c.body || "SUV";
+    $("f-fuel").value = c.fuel || "Hybrid";
+    $("f-trans").value = c.transmission || "Automatic";
+    $("f-drive").value = c.drive || "2WD";
+    $("f-engine").value = c.engine || "";
+    $("f-mileage").value = c.mileage || "";
+    $("f-seats").value = c.seats || "";
+    $("f-color").value = c.color || "";
+    $("f-condition").value = c.condition || "Recondition";
+    $("f-auction").value = c.auction || "";
+    $("f-reg").value = c.reg || "";
+    $("f-price").value = c.price || "";
+    $("f-featured").checked = !!c.featured;
+    $("f-status").value = c.status || "available";
+    $("f-home").checked = !!c.showHome;
+    $("f-home").disabled = c.status === "sold";
+    $("f-tagline").value = c.tagline || "";
+    $("f-about").value = c.about || "";
+    renderStringRows($("photoRows"), c.photos && c.photos.length ? c.photos : [""], "photo");
+    renderStringRows($("featRows"), c.features && c.features.length ? c.features : [""], "feat");
+  }
+
+  function renderStringRows(host, items, kind) {
+    host.innerHTML = items.map(function (v, i) {
+      var ph = kind === "photo" ? "e.g. https://… or upload key like cross_wet" : "e.g. Panoramic glass roof";
+      return '<div class="row-line">' +
+        '<input type="text" class="row-input" value="' + esc(v) + '" placeholder="' + ph + '" aria-label="' + (kind === "photo" ? "Photo " : "Feature ") + (i + 1) + '" />' +
+        '<button type="button" class="ibtn danger row-rm" aria-label="Remove row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
+      '</div>';
+    }).join("");
+  }
+
+  function bindRowEditor(host, addBtn) {
+    host.addEventListener("click", function (e) {
+      var rm = e.target.closest(".row-rm");
+      if (!rm) return;
+      rm.closest(".row-line").remove();
+      if (!host.querySelector(".row-line")) renderStringRows(host, [""], host.id === "photoRows" ? "photo" : "feat");
+    });
+    addBtn.addEventListener("click", function () {
+      var div = document.createElement("div");
+      div.innerHTML = renderStringRows({ innerHTML: "" }, [""], host.id === "photoRows" ? "photo" : "feat");
+      host.appendChild(div.firstElementChild);
+    });
+  }
+
+  bindRowEditor($("photoRows"), $("addPhotoBtn"));
+  bindRowEditor($("featRows"), $("addFeatBtn"));
+
+  function readStringRows(host) {
+    return Array.prototype.map.call(host.querySelectorAll(".row-input"), function (i) { return i.value.trim(); })
+      .filter(function (v) { return v !== ""; });
+  }
+
+  function saveCar() {
+    var title = $("f-title").value.trim();
+    var brand = $("f-brand").value.trim();
+    var model = $("f-model").value.trim();
+    var year = parseInt($("f-year").value, 10);
+    var price = parseInt($("f-price").value, 10);
+
+    if (!title) { toast("Display title is required.", "err"); $("f-title").focus(); return; }
+    if (!brand) { toast("Brand is required.", "err"); $("f-brand").focus(); return; }
+    if (!model) { toast("Model is required.", "err"); $("f-model").focus(); return; }
+    if (!year) { toast("Registration year is required.", "err"); $("f-year").focus(); return; }
+    if (isNaN(price)) { toast("Price is required.", "err"); $("f-price").focus(); return; }
+
+    var status = $("f-status").value;
+    var wantHome = $("f-home").checked && status !== "sold";
+    var slug = $("f-slug").value.trim() || slugify(brand + " " + title + " " + year);
+
+    if (wantHome && editingCar === null) {
+      var n = DB.cars.filter(function (c) { return c.showHome; }).length;
+      if (n >= HOME_LIMIT) {
+        wantHome = false;
+        $("f-home").checked = false;
+        toast("Homepage limit of " + HOME_LIMIT + " reached — this car stays off the homepage.", "err");
+      }
+    }
+
+    var car = {
+      id: slug,
+      title: title,
+      brand: brand,
+      model: model,
+      grade: $("f-grade").value.trim(),
+      year: year,
+      body: $("f-body").value,
+      fuel: $("f-fuel").value,
+      transmission: $("f-trans").value,
+      drive: $("f-drive").value,
+      engine: $("f-engine").value.trim(),
+      mileage: $("f-mileage").value.trim(),
+      seats: parseInt($("f-seats").value, 10) || 5,
+      color: $("f-color").value.trim(),
+      condition: $("f-condition").value,
+      auction: $("f-auction").value.trim(),
+      reg: $("f-reg").value.trim(),
+      price: price,
+      featured: $("f-featured").checked,
+      status: status,
+      showHome: wantHome,
+      photos: readStringRows($("photoRows")),
+      tagline: $("f-tagline").value.trim(),
+      about: $("f-about").value.trim(),
+      features: readStringRows($("featRows"))
+    };
+
+    if (editingCar === null) {
+      var clash = DB.cars.filter(function (c) { return c.id === slug; }).length;
+      if (clash) { toast("That URL slug already exists — change the title or set a custom slug.", "err"); $("f-slug").focus(); return; }
+      DB.cars.push(car);
+      toast("Car added: " + car.title);
+    } else {
+      DB.cars = DB.cars.map(function (c) { return c.id === editingCar ? car : c; });
+      toast("Car saved: " + car.title);
+    }
+
+    saveDB();
+    editingCar = null;
+    window.location.hash = "cars";
+    route();
+  }
+
+  $("addCarBtn").addEventListener("click", addCar);
+  $("emptyAddBtn").addEventListener("click", addCar);
+  $("dAddCar").addEventListener("click", function (e) { e.preventDefault(); addCar(); });
+  $("cancelCarBtn").addEventListener("click", function () { window.location.hash = "cars"; route(); });
+  $("saveCarBtn").addEventListener("click", saveCar);
+
+  $("f-status").addEventListener("change", function () {
+    $("f-home").disabled = $("f-status").value === "sold";
+  });
+
+  /* ================= homepage editor ================= */
+  function renderHome() {
+    var h = DB.home;
+    var f = h.hero;
+
+    $("h-hero-kicker").value = f.kicker;
+    $("h-hero-l1").value = f.line1;
+    $("h-hero-l2").value = f.line2;
+    $("h-hero-l3").value = f.line3;
+    $("h-hero-lede").value = f.lede;
+    $("h-hero-cta1").value = f.cta1;
+    $("h-hero-cta2").value = f.cta2;
+    $("h-lead-title").value = f.leadTitle;
+    $("h-lead-sub").value = f.leadSub;
+
+    $("hAssureRows").innerHTML = f.assures.map(function (v, i) {
+      return '<div class="row-line"><input type="text" class="row-input" value="' + esc(v) + '" aria-label="Assurance point ' + (i + 1) + '" /><button type="button" class="ibtn danger row-rm" aria-label="Remove point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+    }).join("");
+
+    $("hStatRows").innerHTML = f.stats.map(function (s, i) {
+      return '<div class="row-box"><div class="meta">Stat ' + (i + 1) + '</div><div class="row-line">' +
+        '<input type="text" style="max-width:90px" class="row-n" value="' + esc(s.n) + '" aria-label="Number" />' +
+        '<input type="text" style="max-width:70px" class="row-sfx" value="' + esc(s.suffix) + '" aria-label="Suffix" />' +
+        '<input type="text" class="row-lbl" value="' + esc(s.label) + '" aria-label="Label" />' +
+        '<button type="button" class="ibtn danger row-rm" aria-label="Remove stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div></div>';
+    }).join("");
+
+    $("hTrustRows").innerHTML = h.trust.map(function (v, i) {
+      return '<div class="row-line"><input type="text" class="row-input" value="' + esc(v) + '" aria-label="Trust item ' + (i + 1) + '" /><button type="button" class="ibtn danger row-rm" aria-label="Remove item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+    }).join("");
+
+    $("hProcRows").innerHTML = h.process.steps.map(function (s, i) {
+      return '<div class="row-box"><div class="meta">Step 0' + (i + 1) + '</div>' +
+        '<input type="text" class="row-t" value="' + esc(s.title) + '" aria-label="Step title" />' +
+        '<textarea class="row-x" aria-label="Step text">' + esc(s.text) + '</textarea></div>';
+    }).join("");
+
+    $("hFaqRows").innerHTML = h.faq.items.map(function (f, i) {
+      return '<div class="row-box"><div class="meta">Question ' + (i + 1) + '</div>' +
+        '<input type="text" class="row-t" value="' + esc(f.q) + '" aria-label="Question" />' +
+        '<textarea class="row-x" aria-label="Answer">' + esc(f.a) + '</textarea>' +
+        '<div style="display:flex;justify-content:flex-end"><button type="button" class="ibtn danger row-rm" aria-label="Remove question"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div></div>';
+    }).join("");
+
+    $("h-inv-kicker").value = h.inventory.kicker;
+    $("h-inv-title").value = h.inventory.title;
+    $("h-inv-sub").value = h.inventory.sub;
+    $("h-inv-note-title").value = h.inventory.noteTitle;
+    $("h-inv-note-text").value = h.inventory.noteText;
+    $("h-inv-note-btn").value = h.inventory.noteBtn;
+
+    $("h-proc-kicker").value = h.process.kicker;
+    $("h-proc-title").value = h.process.title;
+    $("h-proc-sub").value = h.process.sub;
+
+    $("h-faq-kicker").value = h.faq.kicker;
+    $("h-faq-title").value = h.faq.title;
+
+    $("h-cta-kicker").value = h.cta.kicker;
+    $("h-cta-title").value = h.cta.title;
+    $("h-cta-text").value = h.cta.text;
+    $("h-cta-btn1").value = h.cta.btn1;
+    $("h-cta-btn2").value = h.cta.btn2;
+
+    $("h-con-kicker").value = h.contact.kicker;
+    $("h-con-title").value = h.contact.title;
+    $("h-con-intro").value = h.contact.intro;
+    $("h-con-status").value = h.contact.status;
+  }
+
+  function readRows(host) {
+    return Array.prototype.map.call(host.querySelectorAll(".row-input"), function (i) { return i.value.trim(); })
+      .filter(function (v) { return v !== ""; });
+  }
+
+  function saveHome() {
+    var h = DB.home;
+    h.hero.kicker = $("h-hero-kicker").value;
+    h.hero.line1 = $("h-hero-l1").value;
+    h.hero.line2 = $("h-hero-l2").value;
+    h.hero.line3 = $("h-hero-l3").value;
+    h.hero.lede = $("h-hero-lede").value;
+    h.hero.cta1 = $("h-hero-cta1").value;
+    h.hero.cta2 = $("h-hero-cta2").value;
+    h.hero.leadTitle = $("h-lead-title").value;
+    h.hero.leadSub = $("h-lead-sub").value;
+    h.hero.assures = readRows($("hAssureRows"));
+
+    h.hero.stats = Array.prototype.map.call($("hStatRows").children, function (box) {
+      return {
+        n: box.querySelector(".row-n").value.trim(),
+        suffix: box.querySelector(".row-sfx").value.trim(),
+        label: box.querySelector(".row-lbl").value.trim()
+      };
+    }).filter(function (s) { return s.n !== "" || s.label !== ""; });
+
+    h.trust = readRows($("hTrustRows"));
+
+    h.inventory.kicker = $("h-inv-kicker").value;
+    h.inventory.title = $("h-inv-title").value;
+    h.inventory.sub = $("h-inv-sub").value;
+    h.inventory.noteTitle = $("h-inv-note-title").value;
+    h.inventory.noteText = $("h-inv-note-text").value;
+    h.inventory.noteBtn = $("h-inv-note-btn").value;
+
+    h.process.kicker = $("h-proc-kicker").value;
+    h.process.title = $("h-proc-title").value;
+    h.process.sub = $("h-proc-sub").value;
+    h.process.steps = Array.prototype.map.call($("hProcRows").children, function (box) {
+      return { title: box.querySelector(".row-t").value.trim(), text: box.querySelector(".row-x").value.trim() };
+    });
+
+    h.faq.kicker = $("h-faq-kicker").value;
+    h.faq.title = $("h-faq-title").value;
+    h.faq.items = Array.prototype.map.call($("hFaqRows").children, function (box) {
+      return { q: box.querySelector(".row-t").value.trim(), a: box.querySelector(".row-x").value.trim() };
+    });
+
+    h.cta.kicker = $("h-cta-kicker").value;
+    h.cta.title = $("h-cta-title").value;
+    h.cta.text = $("h-cta-text").value;
+    h.cta.btn1 = $("h-cta-btn1").value;
+    h.cta.btn2 = $("h-cta-btn2").value;
+
+    h.contact.kicker = $("h-con-kicker").value;
+    h.contact.title = $("h-con-title").value;
+    h.contact.intro = $("h-con-intro").value;
+    h.contact.status = $("h-con-status").value;
+
+    saveDB();
+    toast("Homepage content saved.");
+  }
+
+  /* row editors for homepage lists */
+  function bindSimpleRows(hostId) {
+    var host = $(hostId);
+    host.addEventListener("click", function (e) {
+      var rm = e.target.closest(".row-rm");
+      if (!rm) return;
+      rm.closest(".row-line, .row-box").remove();
+    });
+  }
+
+  ["hAssureRows", "hTrustRows"].forEach(bindSimpleRows);
+  bindSimpleRows("hStatRows");
+  bindSimpleRows("hFaqRows");
+
+  document.querySelectorAll('.add-row[data-add]').forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var kind = btn.getAttribute("data-add");
+      if (kind === "assure") {
+        var d = document.createElement("div");
+        d.className = "row-line";
+        d.innerHTML = '<input type="text" class="row-input" placeholder="New point" /><button type="button" class="ibtn danger row-rm" aria-label="Remove point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+        $("hAssureRows").appendChild(d);
+      }
+      if (kind === "trust") {
+        var t = document.createElement("div");
+        t.className = "row-line";
+        t.innerHTML = '<input type="text" class="row-input" placeholder="New trust item" /><button type="button" class="ibtn danger row-rm" aria-label="Remove item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+        $("hTrustRows").appendChild(t);
+      }
+      if (kind === "stat") {
+        var s = document.createElement("div");
+        s.className = "row-box";
+        s.innerHTML = '<div class="meta">New stat</div><div class="row-line">' +
+          '<input type="text" style="max-width:90px" class="row-n" placeholder="50" />' +
+          '<input type="text" style="max-width:70px" class="row-sfx" placeholder="+" />' +
+          '<input type="text" class="row-lbl" placeholder="Label" />' +
+          '<button type="button" class="ibtn danger row-rm" aria-label="Remove stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+        $("hStatRows").appendChild(s);
+      }
+      if (kind === "faq") {
+        var f = document.createElement("div");
+        f.className = "row-box";
+        f.innerHTML = '<div class="meta">New question</div>' +
+          '<input type="text" class="row-t" placeholder="Question" />' +
+          '<textarea class="row-x" placeholder="Answer"></textarea>' +
+          '<div style="display:flex;justify-content:flex-end"><button type="button" class="ibtn danger row-rm" aria-label="Remove question"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+        $("hFaqRows").appendChild(f);
+      }
+    });
+  });
+
+  $("saveHomeBtn").addEventListener("click", saveHome);
+
+  /* ================= settings ================= */
+  function renderSettings() {
+    var s = DB.settings;
+    $("s-phone").value = s.phone;
+    $("s-wa").value = s.wa;
+    $("s-address").value = s.address;
+    $("s-h-week").value = s.hoursWeek;
+    $("s-h-fri").value = s.hoursFri;
+    $("s-emergency").value = s.emergency;
+  }
+
+  $("saveSettingsBtn").addEventListener("click", function () {
+    DB.settings.phone = $("s-phone").value.trim();
+    DB.settings.wa = $("s-wa").value.trim();
+    DB.settings.address = $("s-address").value.trim();
+    DB.settings.hoursWeek = $("s-h-week").value.trim();
+    DB.settings.hoursFri = $("s-h-fri").value.trim();
+    DB.settings.emergency = $("s-emergency").value.trim();
+    saveDB();
+    toast("Settings saved.");
+  });
+
+  /* ================= reset ================= */
+  $("resetBtn").addEventListener("click", function (e) {
+    e.preventDefault();
+    if (!confirm("Reset all data back to the sample content? Your changes will be lost.")) return;
+    localStorage.removeItem(LS_KEY);
+    DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+    route();
+    toast("Demo data restored.");
+  });
+
+  /* ================= boot ================= */
+  $("today").textContent = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  route();
+
+})();
+</script>
+</body>
+</html>

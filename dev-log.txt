@@ -1,0 +1,152 @@
+
+> mariam-automobile@1.0.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use by process 9528, using available port 3001 instead.
+   ▲ Next.js 15.5.24
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.0.111:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 1442ms (699 modules)
+ ⨯ TypeError: Cannot read properties of undefined (reading 'kicker')
+    at HomePage (app\page.jsx:542:56)
+  540 |         <div className="wrap">
+  541 |           <div className="sec-head center rv">
+> 542 |             <span className="kicker on-dark">{home.why.kicker}</span>
+      |                                                        ^
+  543 |             <h2>{home.why.title}</h2>
+  544 |             <p>{home.why.sub}</p>
+  545 |           </div> {
+  digest: '4091147901'
+}
+ GET / 500 in 3016ms
+ ✓ Compiled in 470ms (451 modules)
+ GET / 200 in 1405ms
+ ○ Compiling /cars ...
+ ✓ Compiled /cars in 2.1s (733 modules)
+ GET /cars 200 in 2928ms
+ ○ Compiling /cars/[id] ...
+ ✓ Compiled /cars/[id] in 1805ms (769 modules)
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CarPage (app\cars\[id]\page.jsx:124:73)
+  122 |
+  123 | export default async function CarPage({ params }) {
+> 124 |   const [car, settings, listing] = await Promise.all([getCarById(params.id), getSettings(), getListingCars()]);
+      |                                                                         ^
+  125 |   if (!car) notFound();
+  126 |   const site = { ...SITE, ...settings };
+  127 |
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\cars\[id]\page.jsx:23:39)
+  21 |
+  22 | export async function generateMetadata({ params }) {
+> 23 |   const car = await getCarById(params.id);
+     |                                       ^
+  24 |   if (!car) return { title: "Car not found" };
+  25 |   const name = `${car.brand} ${car.title} ${car.year}`;
+  26 |   return {
+ GET /cars/corolla-cross-z-2023 200 in 7299ms
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CarPage (app\cars\[id]\page.jsx:124:73)
+  122 |
+  123 | export default async function CarPage({ params }) {
+> 124 |   const [car, settings, listing] = await Promise.all([getCarById(params.id), getSettings(), getListingCars()]);
+      |                                                                         ^
+  125 |   if (!car) notFound();
+  126 |   const site = { ...SITE, ...settings };
+  127 |
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\cars\[id]\page.jsx:23:39)
+  21 |
+  22 | export async function generateMetadata({ params }) {
+> 23 |   const car = await getCarById(params.id);
+     |                                       ^
+  24 |   if (!car) return { title: "Car not found" };
+  25 |   const name = `${car.brand} ${car.title} ${car.year}`;
+  26 |   return {
+ GET /cars/corolla-cross-s-2022 200 in 419ms
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CarPage (app\cars\[id]\page.jsx:124:73)
+  122 |
+  123 | export default async function CarPage({ params }) {
+> 124 |   const [car, settings, listing] = await Promise.all([getCarById(params.id), getSettings(), getListingCars()]);
+      |                                                                         ^
+  125 |   if (!car) notFound();
+  126 |   const site = { ...SITE, ...settings };
+  127 |
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\cars\[id]\page.jsx:23:39)
+  21 |
+  22 | export async function generateMetadata({ params }) {
+> 23 |   const car = await getCarById(params.id);
+     |                                       ^
+  24 |   if (!car) return { title: "Car not found" };
+  25 |   const name = `${car.brand} ${car.title} ${car.year}`;
+  26 |   return {
+ GET /cars/chr-hybrid-pearl-2020 200 in 404ms
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CarPage (app\cars\[id]\page.jsx:124:73)
+  122 |
+  123 | export default async function CarPage({ params }) {
+> 124 |   const [car, settings, listing] = await Promise.all([getCarById(params.id), getSettings(), getListingCars()]);
+      |                                                                         ^
+  125 |   if (!car) notFound();
+  126 |   const site = { ...SITE, ...settings };
+  127 |
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\cars\[id]\page.jsx:23:39)
+  21 |
+  22 | export async function generateMetadata({ params }) {
+> 23 |   const car = await getCarById(params.id);
+     |                                       ^
+  24 |   if (!car) return { title: "Car not found" };
+  25 |   const name = `${car.brand} ${car.title} ${car.year}`;
+  26 |   return {
+ GET /cars/chr-hybrid-red-2020 200 in 601ms
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at CarPage (app\cars\[id]\page.jsx:124:73)
+  122 |
+  123 | export default async function CarPage({ params }) {
+> 124 |   const [car, settings, listing] = await Promise.all([getCarById(params.id), getSettings(), getListingCars()]);
+      |                                                                         ^
+  125 |   if (!car) notFound();
+  126 |   const site = { ...SITE, ...settings };
+  127 |
+Error: Route "/cars/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (app\cars\[id]\page.jsx:23:39)
+  21 |
+  22 | export async function generateMetadata({ params }) {
+> 23 |   const car = await getCarById(params.id);
+     |                                       ^
+  24 |   if (!car) return { title: "Car not found" };
+  25 |   const name = `${car.brand} ${car.title} ${car.year}`;
+  26 |   return {
+ GET /cars/yaris-cross-z-2020 200 in 391ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 706ms (855 modules)
+ GET /admin 200 in 1104ms
+ GET / 200 in 656ms
+ GET / 200 in 582ms
+ GET / 200 in 974ms
+ GET / 200 in 423ms
+ GET / 200 in 527ms
+ GET / 200 in 481ms
+ GET / 200 in 569ms
+ GET /cars 200 in 335ms
+ GET /admin 200 in 77ms
+ GET / 200 in 692ms
+ GET / 200 in 519ms
+ GET / 200 in 472ms
+ ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.24
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.0.111:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.8s
+[?25h

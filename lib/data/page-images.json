@@ -1,0 +1,24 @@
+{
+  "index.html": {
+    "heroMedia": "/img/ece91fddb211fccd.jpg",
+    "carBody": "/img/1cc5aa91e239badf.webp",
+    "rimRear": "/img/f03d4f6d7443ad06.webp",
+    "rimFront": "/img/e42e4ce18438132b.webp",
+    "finVisual": "/img/990056b2af776984.jpg",
+    "whyBg": null,
+    "ctaBg": "/img/ece91fddb211fccd.jpg",
+    "logoLight": "/img/f1d15e33fb2980c0.png",
+    "logoDark": "/img/55037bb8a9fd1ecc.png",
+    "logoFooter": "/img/728161d7ad47322a.png"
+  },
+  "cars.html": {
+    "logoLight": "/img/f1d15e33fb2980c0.png",
+    "logoDark": "/img/55037bb8a9fd1ecc.png",
+    "logoFooter": "/img/f1d15e33fb2980c0.png"
+  },
+  "car.html": {
+    "logoLight": "/img/f1d15e33fb2980c0.png",
+    "logoDark": "/img/55037bb8a9fd1ecc.png",
+    "logoFooter": "/img/f1d15e33fb2980c0.png"
+  }
+}
