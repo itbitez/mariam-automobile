@@ -12,6 +12,7 @@ import SimilarCard from "@/components/similar-card";
 import BookViewing from "@/components/book-viewing";
 import WaGlyph from "@/components/wa-glyph";
 import SiteFooter from "@/components/site-footer";
+import MobileNav from "@/components/mobile-nav";
 import "./car.css";
 
 export const revalidate = 60;
@@ -196,6 +197,7 @@ export default async function CarPage({ params }) {
           {PHONE_ICON}
           {site.phone}
         </a>
+        <MobileNav phone={site.phone} tel={telLink(undefined, site)} active="/cars" />
       </nav>
 
       {/* HEAD */}

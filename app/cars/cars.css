@@ -1249,6 +1249,18 @@
       display: none;
     }
 
+    /* Replaces the links that just disappeared — without it the header had no
+       navigation at all on a phone. */
+    .mnav-burger {
+      display: flex;
+    }
+
+    /* Header keeps only the logo and the menu icon on mobile. Calling is still
+       one tap away inside the drawer. */
+    nav > .btn-red {
+      display: none;
+    }
+
     .filter-toggle {
       display: inline-flex;
     }

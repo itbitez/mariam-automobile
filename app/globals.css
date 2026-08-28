@@ -11,6 +11,103 @@ html {
 }
 
 /* =========================================================
+   Mobile navigation for /cars and /cars/[id] (components/mobile-nav.jsx).
+
+   Those pages hid .nav-mid below 1080px with nothing to replace it, so on a
+   phone the header collapsed to a logo and a call button and there was no way
+   to reach another page. Colours are written out rather than taken from the
+   per-page :root palettes so it renders identically on both routes.
+   ========================================================= */
+.mnav-burger {
+  display: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.mnav-burger i {
+  display: block;
+  width: 19px;
+  height: 2px;
+  border-radius: 2px;
+  background: #fff;
+  transition: transform 0.35s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.25s;
+}
+
+/* The cars pages swap the header to a light bar once scrolled. */
+nav.scrolled .mnav-burger {
+  border-color: rgba(13, 18, 24, 0.14);
+  background: rgba(13, 18, 24, 0.05);
+}
+
+nav.scrolled .mnav-burger i { background: #0d1218; }
+
+.mnav-burger.is-open i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.mnav-burger.is-open i:nth-child(2) { opacity: 0; }
+.mnav-burger.is-open i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mnav-burger.is-open i { background: #fff; }
+
+.mnav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  background: #10161d;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 90px 26px 32px;
+  overflow-y: auto;
+}
+
+.mnav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-sora), var(--font-fallback-sans);
+  font-weight: 700;
+  font-size: 25px;
+  letter-spacing: -0.02em;
+  padding: 17px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: mnavIn 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.mnav-link:nth-child(1) { animation-delay: 0.06s; }
+.mnav-link:nth-child(2) { animation-delay: 0.12s; }
+.mnav-link:nth-child(3) { animation-delay: 0.18s; }
+.mnav-link:nth-child(4) { animation-delay: 0.24s; }
+.mnav-link:nth-child(5) { animation-delay: 0.3s; }
+.mnav-link:nth-child(6) { animation-delay: 0.36s; }
+
+.mnav-link[aria-current="page"] { color: #ff5a63; }
+.mnav-link svg { width: 17px; height: 17px; color: #fc1824; flex: none; }
+
+@keyframes mnavIn { to { opacity: 1; transform: none; } }
+
+.mnav-cta { display: grid; gap: 10px; margin-top: 30px; }
+.mnav-cta .btn { width: 100%; padding: 16px 22px; }
+
+/* Shown only where .nav-mid is hidden — see each page's stylesheet. */
+@media (prefers-reduced-motion: reduce) {
+  .mnav-link { animation-duration: 0.001ms; opacity: 1; transform: none; }
+  .mnav-burger, .mnav-burger i { transition-duration: 0.001ms; }
+}
+
+/* =========================================================
    Site footer — shared by every page (components/site-footer.jsx).
    Colours are written out rather than pulled from the per-page :root
    palettes, so it renders identically on all three routes.

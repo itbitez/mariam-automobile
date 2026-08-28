@@ -1322,6 +1322,18 @@
       display: none;
     }
 
+    /* Replaces the links that just disappeared — without it the header had no
+       navigation at all on a phone. */
+    .mnav-burger {
+      display: flex;
+    }
+
+    /* Header keeps only the logo and the menu icon on mobile. The page already
+       has a prominent "Call now" button in the sidebar. */
+    nav > .btn-red {
+      display: none;
+    }
+
     .shell {
       grid-template-columns: 1fr;
       gap: 34px;

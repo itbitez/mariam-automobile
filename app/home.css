@@ -2348,6 +2348,16 @@
   /* ---------- responsive ---------- */
   @media (max-width: 1000px) {
     .nav-mid { display: none; }
+    /* The burger must appear at the same width the links disappear, or the
+       header has no navigation at all between 901px and 1000px. */
+    .burger { display: flex; }
+    /* Mobile header keeps only the logo and the menu icon — the phone-number
+       button crowded them. Calling is still one tap away inside the drawer. */
+    nav > .btn-red { display: none; }
+    .faq-grid { grid-template-columns: 1fr; gap: 26px; }
+    /* Sticky only makes sense beside a scrolling column; stacked it pins the
+       heading over the questions. */
+    .faq-left { position: static; top: auto; }
     .contact-shell { grid-template-columns: 1fr; }
     .cs-left, .cs-right { padding: 34px 30px; }
     .cs-right { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); }
@@ -2364,10 +2374,6 @@
        switch to a landscape banner above it. */
     .fin-grid { grid-template-columns: 1fr; gap: 30px; }
     .fin-visual { aspect-ratio: 16 / 10; }
-  }
-
-  @media (max-width: 900px) {
-    .burger { display: flex; }
   }
 
   @media (max-width: 640px) {
@@ -2399,7 +2405,20 @@
     .crow .ci { width: 40px; height: 40px; border-radius: 11px; }
     .crow .val { font-size: 15.5px; }
     .crow .val span { font-size: 12.5px; }
-    .hours-mini .hr { font-size: 12.5px; }
+    /* "Saturday – Thursday" plus "9:00 AM – 8:00 PM" cannot share a 240px line.
+       Side-by-side they wrapped mid-label and read as broken. Stack each row so
+       the day sits above its time, with a rule to keep the pairs distinct. */
+    .hours-mini { margin-top: 8px; }
+    .hours-mini .hr {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      font-size: 12.5px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hours-mini .hr:last-child { border-bottom: 0; padding-bottom: 0; }
+    .hours-mini .hr span:last-child { font-size: 13.5px; }
     .status { font-size: 12.5px; padding: 8px 14px; }
     .status small { display: block; margin-top: 2px; }
     .qa { padding: 16px 18px; border-radius: 15px; }
@@ -2420,6 +2439,10 @@
     .hero-rail { grid-template-columns: repeat(2, 1fr); }
     .hero-rail .cell { padding: 16px 12px 4px; }
     .hero-rail .cell:nth-child(2) { border-right: 0; }
+    /* At two columns, cells 1 and 3 both sit in the left column. Only
+       :first-child had its left padding removed, so "100% Satisfied Customers"
+       sat 12px right of "500+ Cars Sold". Flush every left-column cell. */
+    .hero-rail .cell:nth-child(odd) { padding-left: 0; }
     .inv-top { flex-direction: column; align-items: flex-start; }
     .calc-out { flex-direction: column; align-items: flex-start; }
     .calc-out .side { text-align: left; }

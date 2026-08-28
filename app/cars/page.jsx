@@ -3,6 +3,7 @@ import { getListingCars, getSettings } from "@/lib/query";
 import CarsClient from "@/components/cars-client";
 import WaGlyph from "@/components/wa-glyph";
 import SiteFooter from "@/components/site-footer";
+import MobileNav from "@/components/mobile-nav";
 import "./cars.css";
 
 export const revalidate = 60;
@@ -62,6 +63,7 @@ export default async function CarsPage() {
           {PHONE_ICON}
           {site.phone}
         </a>
+        <MobileNav phone={site.phone} tel={telLink(undefined, site)} active="/cars" />
       </nav>
 
       {/* PAGE HEAD */}
