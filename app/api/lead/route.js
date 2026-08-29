@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { randomUUID } from "node:crypto";
+import { exec } from "@/lib/db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -74,20 +75,26 @@ export async function POST(request) {
     return NextResponse.json({ ok: false, error: "Too many submissions. Please try again shortly." }, { status: 429 });
   }
 
-  const sb = getSupabase();
-  if (!sb) {
-    console.warn("[lead] not saved: Supabase is not configured");
-    return NextResponse.json({ ok: false, error: "Could not save your enquiry. Please call us instead." }, { status: 503 });
-  }
-
-  const { error } = await sb.from("leads").insert({
-    ...lead,
-    user_agent: clean(request.headers.get("user-agent"), 300),
-    created_at: new Date().toISOString(),
-  });
-
-  if (error) {
-    console.warn("[lead] not saved:", error.message);
+  // Deliberately unauthenticated — this replaces the "leads public insert" RLS
+  // policy. Reading them back requires an admin session (/api/admin/leads).
+  try {
+    await exec(
+      `INSERT INTO leads (id, name, phone, car, budget, payment, message, source, user_agent)
+       VALUES (?,?,?,?,?,?,?,?,?)`,
+      [
+        randomUUID(),
+        lead.name ?? "",
+        lead.phone ?? "",
+        lead.car ?? "",
+        lead.budget ?? "",
+        lead.payment ?? "",
+        lead.message ?? "",
+        lead.source ?? "homepage",
+        clean(request.headers.get("user-agent"), 300),
+      ]
+    );
+  } catch (e) {
+    console.warn("[lead] not saved:", e.message);
     return NextResponse.json({ ok: false, error: "Could not save your enquiry. Please call us instead." }, { status: 500 });
   }
 
