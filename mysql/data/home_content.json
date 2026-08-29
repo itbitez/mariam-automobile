@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1,
+    "hero": {
+      "cta1": "View Available Cars",
+      "cta2": "Ask on WhatsApp",
+      "lede": "Hand-picked Japanese vehicles, auction-verified and fully inspected. Bank loan or cash — we handle import, registration and after-sales, start to finish.",
+      "line1": "Japan Recondition",
+      "line2": "& New Cars",
+      "line3": "Sales Center",
+      "stats": [
+        {
+          "n": "500",
+          "label": "Cars Sold",
+          "suffix": "+"
+        },
+        {
+          "n": "10",
+          "label": "Years Experience",
+          "suffix": "+"
+        },
+        {
+          "n": "100",
+          "label": "Satisfied Customers",
+          "suffix": "%"
+        },
+        {
+          "n": "24",
+          "label": "7 Customer Support",
+          "suffix": "/"
+        }
+      ],
+      "kicker": "Rajshahi · Bangladesh",
+      "assures": [
+        "Auction sheet on request",
+        "Bank loan support",
+        "Warranty included"
+      ],
+      "leadSub": "Tell us what you're after — we'll reply with options and full pricing.",
+      "leadTitle": "Get your price today"
+    },
+    "trust": [
+      "Auction-verified vehicles",
+      "Bank loan facility",
+      "Cash purchase discounts",
+      "Warranty included",
+      "Import & registration handled",
+      "After-sales support",
+      "Trade-in valuations",
+      "Custom car sourcing"
+    ],
+    "inventory": {
+      "sub": "Every unit is hand-selected from Japanese auctions, thoroughly inspected, and delivered with warranty. Photos are of the actual vehicles.",
+      "title": "In stock right now",
+      "kicker": "Available cars",
+      "noteBtn": "Request a custom order",
+      "noteText": "Tell us the model, grade, year and budget — we source it directly from Japanese auctions and quote you the full landed cost before you commit.",
+      "noteTitle": "Looking for a specific model?"
+    },
+    "process": {
+      "sub": "Four steps, no surprises. Scroll to take the drive — you'll know the cost, condition and timeline before any money moves.",
+      "steps": [
+        {
+          "text": "Pick from ready stock in Rajshahi, or tell us the exact model and grade to source from Japan.",
+          "title": "Choose your car"
+        },
+        {
+          "text": "Review the auction sheet and inspection report, then see the car in person at our showroom.",
+          "title": "Verify the condition"
+        },
+        {
+          "text": "Cash for a better price, or let us arrange bank financing with quick approval.",
+          "title": "Choose how to pay"
+        },
+        {
+          "text": "We handle registration and hand over the keys — with warranty and after-sales support.",
+          "title": "Drive it home"
+        }
+      ],
+      "title": "From auction to your driveway",
+      "kicker": "How it works"
+    },
+    "faq": {
+      "note": "Still unsure about something? Send us a message and we'll answer honestly — even if the answer is \"this car isn't right for you.\"",
+      "items": [
+        {
+          "a": "It's a used vehicle imported from Japan, then prepared for sale here. Japanese cars are typically well-maintained with low mileage, so a reconditioned unit gives you near-new quality at a considerably lower price than a brand-new import.",
+          "q": "What exactly is a \"reconditioned\" car?"
+        },
+        {
+          "a": "Yes. Ask us for the auction sheet and inspection details of any unit in stock. We'd rather you check the grade and condition report carefully than buy on trust alone.",
+          "q": "Can I see the auction sheet before buying?"
+        },
+        {
+          "a": "We do. We work with all major banks in Bangladesh and can guide you through the paperwork and approval process. Use the estimator above for a rough monthly figure, then message us for a bank-confirmed quote.",
+          "q": "Do you help arrange a bank loan?"
+        },
+        {
+          "a": "We handle the import and registration process for you, so you receive a road-ready car. We'll walk you through every document and cost involved before you commit.",
+          "q": "Is registration and paperwork included?"
+        },
+        {
+          "a": "Every car comes with warranty coverage, plus after-sales support and maintenance. You can reach us on WhatsApp any time, including outside showroom hours.",
+          "q": "What happens after I buy — is there a warranty?"
+        },
+        {
+          "a": "Yes. Send us photos and details of your current vehicle on WhatsApp and we'll give you a valuation, which can go straight towards your next car.",
+          "q": "Can I trade in my current car?"
+        }
+      ],
+      "title": "What buyers ask us most",
+      "kicker": "Questions, answered",
+      "noteBtn": "Ask us anything"
+    },
+    "cta": {
+      "btn1": "Call 01944755111",
+      "btn2": "Get directions",
+      "text": "Visit the showroom in Terokhadia, or message us and we'll send options that match your budget today.",
+      "title": "Let's find the right car for you",
+      "kicker": "Ready when you are"
+    },
+    "contact": {
+      "intro": "No pressure and no rush — tell us your budget and we'll show you what genuinely fits.",
+      "title": "Come in, or just message us",
+      "kicker": "Contact us",
+      "waText": "Send a message and we'll reply with real options, real prices and the auction sheet.",
+      "waTitle": "WhatsApp is the fastest way",
+      "helpItems": [
+        "Car availability and pricing",
+        "Bank loan and financing options",
+        "Import and registration process",
+        "Trade-in valuations",
+        "Inspection and warranty details"
+      ]
+    },
+    "updated_at": "2026-08-27T08:25:57.602953+00:00"
+  }
+]

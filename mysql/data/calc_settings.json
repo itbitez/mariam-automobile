@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "price_min": 1000000,
+    "price_max": 6000000,
+    "price_step": 50000,
+    "price_default": 3000000,
+    "down_min": 20,
+    "down_max": 70,
+    "down_step": 5,
+    "down_default": 40,
+    "term_min": 1,
+    "term_max": 7,
+    "term_step": 1,
+    "term_default": 5,
+    "rate_min": 7,
+    "rate_max": 16,
+    "rate_step": 0.5,
+    "rate_default": 11,
+    "show_rate_slider": true,
+    "car_page_rate": 11,
+    "heading": "Monthly instalment estimator",
+    "intro": "Move the sliders to see roughly what your monthly payment could look like. Then message us for an exact, bank-confirmed quote.",
+    "disclaimer": "Indicative estimate only. Final rates, fees and eligibility are set by your bank.",
+    "updated_at": "2026-08-27T11:15:41.766061+00:00"
+  }
+]
