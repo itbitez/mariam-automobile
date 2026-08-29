@@ -188,6 +188,7 @@ export default async function CarPage({ params }) {
           <a href="/cars" className="active">
             Cars
           </a>
+          <a href="/happy-customers">Happy Customers</a>
           <a href="/#process">How It Works</a>
           <a href="/#finance">Finance</a>
           <a href="/#faq">FAQ</a>

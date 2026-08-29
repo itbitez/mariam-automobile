@@ -81,6 +81,7 @@ export default async function HomePage() {
             Home
           </Link>
           <Link href="/cars">Cars</Link>
+          <Link href="/happy-customers">Happy Customers</Link>
           <Link href="#process">How It Works</Link>
           <Link href="#finance">Finance</Link>
           <Link href="#faq">FAQ</Link>
@@ -103,6 +104,9 @@ export default async function HomePage() {
         </a>
         <a className="dlink" href="/cars">
           Cars{ARROW}
+        </a>
+        <a className="dlink" href="/happy-customers">
+          Happy Customers{ARROW}
         </a>
         <a className="dlink" href="#process">
           How It Works{ARROW}

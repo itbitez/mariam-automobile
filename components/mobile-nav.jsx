@@ -32,6 +32,7 @@ const PHONE = (
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/cars", label: "Cars" },
+  { href: "/happy-customers", label: "Happy Customers" },
   { href: "/#process", label: "How It Works" },
   { href: "/#finance", label: "Finance" },
   { href: "/#faq", label: "FAQ" },

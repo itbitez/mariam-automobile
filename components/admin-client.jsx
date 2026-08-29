@@ -9,6 +9,7 @@ import { MediaBrowser } from "@/components/media-library";
 import PhotoManager from "@/components/photo-manager";
 import CalcView from "@/components/calc-view";
 import SetupView from "@/components/setup-view";
+import HappyView from "@/components/happy-view";
 import "./admin.css";
 
 const supabase = getSupabaseClient();
@@ -478,7 +479,7 @@ export default function AdminClient() {
         setView("cars");
       } else {
         setView(
-          ["dashboard", "cars", "carform", "leads", "media", "home", "calc", "settings", "setup"].includes(h)
+          ["dashboard", "cars", "carform", "leads", "media", "happy", "home", "calc", "settings", "setup"].includes(h)
             ? h
             : "dashboard"
         );
@@ -672,6 +673,9 @@ export default function AdminClient() {
             {IC.media}Media library
           </a>
           <span className="lbl">Site content</span>
+          <a href="#happy" className={view === "happy" ? "active" : ""} onClick={(e) => { e.preventDefault(); nav("happy"); }}>
+            {IC.photo}Happy Customers
+          </a>
           <a href="#home" className={view === "home" ? "active" : ""} onClick={(e) => { e.preventDefault(); nav("home"); }}>
             {IC.home}Homepage
           </a>
@@ -722,6 +726,7 @@ export default function AdminClient() {
         {!dataLoading && view === "leads" && <LeadsView toast={setToast} />}
         {!dataLoading && view === "setup" && <SetupView toast={setToast} />}
         {!dataLoading && view === "media" && <MediaView toast={setToast} />}
+        {!dataLoading && view === "happy" && <HappyView toast={setToast} />}
         {!dataLoading && view === "carform" && (
           <CarFormView
             db={db}

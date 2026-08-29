@@ -23,6 +23,12 @@ export default function sitemap() {
       changeFrequency: "daily",
       priority: 0.9,
     },
+    {
+      url: `${SITE.url}/happy-customers`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
     ...cars,
   ];
 }

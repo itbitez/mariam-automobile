@@ -381,6 +381,8 @@
   body.menu-open .drawer a.dlink:nth-child(3) { animation-delay: 0.24s; }
   body.menu-open .drawer a.dlink:nth-child(4) { animation-delay: 0.30s; }
   body.menu-open .drawer a.dlink:nth-child(5) { animation-delay: 0.36s; }
+  body.menu-open .drawer a.dlink:nth-child(6) { animation-delay: 0.42s; }
+  body.menu-open .drawer a.dlink:nth-child(7) { animation-delay: 0.48s; }
 
   @keyframes dIn { to { opacity: 1; transform: none; } }
 

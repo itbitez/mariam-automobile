@@ -31,6 +31,7 @@ const ARROW = (
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/cars", label: "Available cars" },
+  { href: "/happy-customers", label: "Happy customers" },
   { href: "/#process", label: "How it works" },
   { href: "/#finance", label: "Finance & loans" },
   { href: "/#faq", label: "FAQ" },
