@@ -2,15 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { getSupabaseClient } from "@/lib/supabase-client";
+import { media as mediaApi } from "@/lib/admin-api";
 import MediaLightbox from "@/components/media-lightbox";
 import SITE_IMAGES from "@/lib/data/site-images.json";
 
-export const MEDIA_BUCKET = "car-photos";
 const MAX_BYTES = 5 * 1024 * 1024;
-const PAGE = 100;
-
-const supabase = getSupabaseClient();
 
 const I = {
   upload: (
@@ -39,19 +35,18 @@ const I = {
   ),
 };
 
-export function publicUrl(name) {
-  return supabase.storage.from(MEDIA_BUCKET).getPublicUrl(name).data.publicUrl;
-}
+/**
+ * Uploads used to be objects in a Storage bucket whose public URL was derived
+ * from the filename. They are now files on disk catalogued in the `media`
+ * table, and each row carries its own served URL — so there is nothing left to
+ * derive.
+ */
 
 function prettySize(bytes) {
   if (!bytes) return "";
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
   return (bytes / 1024 / 1024).toFixed(1) + " MB";
-}
-
-function safeName(name) {
-  return Date.now() + "-" + Math.random().toString(36).slice(2, 7) + "-" + name.replace(/[^a-zA-Z0-9._-]/g, "-");
 }
 
 /**
@@ -71,15 +66,12 @@ export function MediaBrowser({ selected, onToggle, onNotify, selectable = true }
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const { data, error: err } = await supabase.storage
-      .from(MEDIA_BUCKET)
-      .list("", { limit: PAGE, sortBy: { column: "created_at", order: "desc" } });
+    const { data, error: err } = await mediaApi.list();
     if (err) {
       setError(err.message);
       setItems([]);
     } else {
-      // Supabase seeds empty buckets with a hidden placeholder object.
-      setItems((data || []).filter((f) => f.name && f.name !== ".emptyFolderPlaceholder"));
+      setItems(data?.media || []);
     }
     setLoading(false);
   }, []);
@@ -100,31 +92,32 @@ export function MediaBrowser({ selected, onToggle, onNotify, selectable = true }
     if (!ok.length) return;
 
     setUploading(ok.length);
-    let done = 0;
-    let failed = 0;
-    for (const file of ok) {
-      const { error: err } = await supabase.storage.from(MEDIA_BUCKET).upload(safeName(file.name), file, {
-        upsert: false,
-        contentType: file.type,
-      });
-      if (err) failed++;
-      done++;
-      setUploading(ok.length - done);
-    }
+    const { data, error: err } = await mediaApi.upload(ok);
     setUploading(0);
     await load();
-    if (failed) onNotify?.({ msg: `${failed} upload(s) failed.`, type: "err" });
-    else onNotify?.({ msg: `Uploaded ${ok.length} image${ok.length > 1 ? "s" : ""}.`, type: "ok" });
+
+    if (err) {
+      onNotify?.({ msg: "Upload failed: " + err.message, type: "err" });
+      return;
+    }
+    const n = data?.media?.length || 0;
+    if (data?.skipped?.length) onNotify?.({ msg: data.skipped.join("; "), type: "err" });
+    if (n) onNotify?.({ msg: `Uploaded ${n} image${n > 1 ? "s" : ""}.`, type: "ok" });
   }
 
-  /** Returns true when the object is actually gone, so the lightbox can close. */
-  async function remove(name) {
-    const { error: err } = await supabase.storage.from(MEDIA_BUCKET).remove([name]);
+  /** Returns true when the file is actually gone, so the lightbox can close. */
+  async function remove(item) {
+    // Site images ship with the app and have no media row to delete.
+    if (!item?.id) {
+      onNotify?.({ msg: "That image is part of the site build and cannot be deleted here.", type: "err" });
+      return false;
+    }
+    const { error: err } = await mediaApi.remove(item.id);
     if (err) {
       onNotify?.({ msg: "Delete failed: " + err.message, type: "err" });
       return false;
     }
-    setItems((list) => list.filter((f) => f.name !== name));
+    setItems((list) => list.filter((f) => f.id !== item.id));
     onNotify?.({ msg: "Image deleted permanently.", type: "ok" });
     return true;
   }
@@ -133,9 +126,10 @@ export function MediaBrowser({ selected, onToggle, onNotify, selectable = true }
   const uploads = useMemo(
     () =>
       items.map((f) => ({
-        url: publicUrl(f.name),
-        name: f.name,
-        size: f.metadata?.size,
+        id: f.id,
+        url: f.url,
+        name: f.filename,
+        size: f.size_bytes,
         createdAt: f.created_at,
         readOnly: false,
       })),
@@ -296,7 +290,7 @@ export function MediaBrowser({ selected, onToggle, onNotify, selectable = true }
       <MediaLightbox
         item={lightboxItem}
         onClose={() => setLightboxIndex(-1)}
-        onDelete={(item) => remove(item.name)}
+        onDelete={(item) => remove(item)}
         hasPrev={lightboxIndex > 0}
         hasNext={lightboxIndex >= 0 && lightboxIndex < shown.length - 1}
         onPrev={() => setLightboxIndex((i) => Math.max(0, i - 1))}

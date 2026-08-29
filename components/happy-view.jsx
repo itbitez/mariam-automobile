@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getSupabaseClient } from "@/lib/supabase-client";
-import MediaLibrary, { MEDIA_BUCKET } from "@/components/media-library";
-
-const supabase = getSupabaseClient();
+import { happy, media } from "@/lib/admin-api";
+import MediaLibrary from "@/components/media-library";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -58,14 +56,10 @@ export default function HappyView({ toast }) {
   useEffect(() => {
     let alive = true;
     (async () => {
-      const { data, error: err } = await supabase
-        .from("happy_customers")
-        .select("*")
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
+      const { data, error: err } = await happy.list();
       if (!alive) return;
       if (err) setError(err.message);
-      else setRows(data || []);
+      else setRows(data?.rows || []);
       setLoading(false);
     })();
     return () => {
@@ -76,22 +70,16 @@ export default function HappyView({ toast }) {
   /** Append new photos to the end of the gallery. */
   async function addUrls(urls) {
     if (!urls.length) return;
-    const base = rows.length ? Math.max(...rows.map((r) => r.sort_order || 0)) + 1 : 0;
-    const payload = urls.map((url, i) => ({ image_url: url, caption: "", sort_order: base + i }));
-
-    const { data, error: err } = await supabase.from("happy_customers").insert(payload).select();
+    // Ordering is assigned server side so two admins adding at once cannot
+    // collide on the same sort_order.
+    const { data, error: err } = await happy.add(urls);
     if (err) return toast({ msg: "Could not save: " + err.message, type: "err" });
 
-    // Reading the rows back confirms the insert actually landed. An RLS policy
-    // that filters the write returns success with zero rows.
-    if (!data || !data.length) {
-      return toast({
-        msg: "Saved nothing — check you are signed in and the happy_customers policies exist.",
-        type: "err",
-      });
-    }
-    setRows((r) => [...r, ...data]);
-    toast({ msg: `Added ${data.length} photo${data.length > 1 ? "s" : ""}.`, type: "ok" });
+    const created = data?.rows || [];
+    if (!created.length) return toast({ msg: "Saved nothing — please try again.", type: "err" });
+
+    setRows((r) => [...r, ...created]);
+    toast({ msg: `Added ${created.length} photo${created.length > 1 ? "s" : ""}.`, type: "ok" });
   }
 
   async function uploadDirect(e) {
@@ -106,26 +94,16 @@ export default function HappyView({ toast }) {
     if (!ok.length) return;
 
     setUploading(true);
-    const urls = [];
-    for (const file of ok) {
-      const path =
-        Date.now() + "-" + Math.random().toString(36).slice(2, 7) + "-" + file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-      const { error: upErr } = await supabase.storage.from(MEDIA_BUCKET).upload(path, file, {
-        upsert: false,
-        contentType: file.type,
-      });
-      if (upErr) {
-        toast({ msg: "Upload failed: " + upErr.message, type: "err" });
-        continue;
-      }
-      urls.push(supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl);
-    }
+    const { data, error: upErr } = await media.upload(ok);
     setUploading(false);
-    await addUrls(urls);
+
+    if (upErr) return toast({ msg: "Upload failed: " + upErr.message, type: "err" });
+    if (data?.skipped?.length) toast({ msg: data.skipped.join("; "), type: "err" });
+    await addUrls((data?.media || []).map((m) => m.url));
   }
 
   async function saveCaption(id, caption) {
-    const { error: err } = await supabase.from("happy_customers").update({ caption }).eq("id", id);
+    const { error: err } = await happy.update(id, { caption });
     if (err) toast({ msg: "Caption not saved: " + err.message, type: "err" });
   }
 
@@ -142,10 +120,7 @@ export default function HappyView({ toast }) {
 
     setBusy(id);
     for (const r of [renumbered[i], renumbered[j]]) {
-      const { error: err } = await supabase
-        .from("happy_customers")
-        .update({ sort_order: r.sort_order })
-        .eq("id", r.id);
+      const { error: err } = await happy.update(r.id, { sortOrder: r.sort_order });
       if (err) toast({ msg: "Reorder failed: " + err.message, type: "err" });
     }
     setBusy(null);
@@ -159,7 +134,7 @@ export default function HappyView({ toast }) {
     }
     setConfirmId(null);
     setBusy(id);
-    const { error: err } = await supabase.from("happy_customers").delete().eq("id", id);
+    const { error: err } = await happy.remove(id);
     setBusy(null);
     if (err) return toast({ msg: "Delete failed: " + err.message, type: "err" });
     setRows((r) => r.filter((x) => x.id !== id));
@@ -180,7 +155,7 @@ export default function HappyView({ toast }) {
         </div>
         <div className="auth-err" style={{ display: "block" }}>
           {missing
-            ? "The happy_customers table does not exist yet. Open Supabase → SQL Editor, run supabase/migration-happy-customers.sql, then reload this page."
+            ? "The happy_customers table does not exist yet. Open phpMyAdmin and run mysql/01-schema.sql, then reload this page."
             : "Could not load the gallery: " + error}
         </div>
       </section>

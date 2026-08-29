@@ -8,14 +8,11 @@
     "start": "next start",
     "package": "node scripts/package-for-hostinger.mjs",
     "db:ping": "node scripts/db-ping.mjs",
-    "migrate:export": "node scripts/export-supabase.mjs",
     "migrate:import": "node scripts/import-mysql.mjs",
     "admin:create": "node scripts/create-admin.mjs",
     "db:verify": "node scripts/db-verify.mjs"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.12.5",
-    "@supabase/supabase-js": "^2.112.4",
     "mysql2": "^3.24.2",
     "next": "^15.1.6",
     "react": "^19.0.0",

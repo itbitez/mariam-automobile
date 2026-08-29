@@ -1,19 +1,8 @@
 const isDev = process.env.NODE_ENV !== "production";
 
-// The browser (admin panel) talks to Supabase directly for auth, table reads/writes
-// and photo uploads, so its origin has to be allowed in connect-src and img-src.
-function supabaseOrigin() {
-  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!raw) return null;
-  try {
-    return new URL(raw).origin;
-  } catch {
-    console.warn("[next.config] NEXT_PUBLIC_SUPABASE_URL is not a valid URL:", raw);
-    return null;
-  }
-}
-
-const SUPABASE = supabaseOrigin();
+// The admin panel used to call Supabase from the browser, so a third-party
+// origin had to be allowed in connect-src and img-src. Everything now goes
+// through same-origin /api routes, so the policy tightens back to 'self'.
 
 const csp = [
   "default-src 'self'",
@@ -22,10 +11,10 @@ const csp = [
   // 'unsafe-eval' no client JS runs at all and every page renders blank.
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  ["img-src 'self' data: blob: https://images.unsplash.com", SUPABASE].filter(Boolean).join(" "),
+  "img-src 'self' data: blob: https://images.unsplash.com",
   "font-src 'self' data:",
-  // 'self' plus the Supabase REST/auth/storage origin; ws: covers the dev HMR socket.
-  ["connect-src 'self'", SUPABASE, isDev ? "ws: wss:" : null].filter(Boolean).join(" "),
+  // Same-origin only now; ws: covers the dev HMR socket.
+  ["connect-src 'self'", isDev ? "ws: wss:" : null].filter(Boolean).join(" "),
   "frame-ancestors 'none'",
   "form-action 'self'",
   "base-uri 'self'",
@@ -74,10 +63,7 @@ const nextConfig = {
     deviceSizes: [360, 480, 640, 828, 1080, 1280, 1600, 1920],
     imageSizes: [64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30,
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      ...(SUPABASE ? [{ protocol: "https", hostname: new URL(SUPABASE).hostname }] : []),
-    ],
+    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
   },
   async headers() {
     return [

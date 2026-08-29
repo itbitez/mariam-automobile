@@ -1,89 +1,77 @@
 # Deploying to Hostinger
 
-The repository is **https://github.com/itbitez/mariam-automobile** (branch `main`).
+Repository: **https://github.com/itbitez/mariam-automobile** (branch `main`).
 
-This is a **Node.js** app, not a static site. It needs a Hostinger plan that runs
-Node: **Business Web Hosting**, or any **Cloud** plan. Premium and Single shared
-hosting will not work — they only serve static files and PHP.
+This is a **Node.js** app backed by **MySQL**. It needs a Hostinger plan that
+runs Node: **Business Web Hosting**, or any **Cloud** plan.
 
-Two routes below. Use the Git one; the ZIP route is kept as a fallback.
+There is no Supabase. Data lives in your Hostinger MySQL database, images live
+on disk, and admin login is handled by the app itself.
 
 ---
 
-# Route A — deploy from GitHub (recommended)
+## 1. Create the database tables
 
-Connect once, then every `git push` rebuilds and redeploys the live site
-automatically.
+hPanel → **phpMyAdmin** → SQL tab → paste [mysql/01-schema.sql](mysql/01-schema.sql) → **Go**.
 
-> **Do not use hPanel's generic Git feature** (the one under *Advanced → Git*).
-> That tool only copies files into a folder — it never runs `npm install` or
-> `npm run build`, so a Next.js app deployed that way will not start. Hostinger
-> documents it as unavailable for Node.js sites. Use the **Node.js web app**
-> import flow described here instead.
+Safe to run more than once — it only creates what is missing.
 
-## 1. Create the app from the repo
+## 2. Create your admin login
 
-1. hPanel → **Websites → Add Website**
-2. Choose **Node.js web app**
-3. Choose **Import Git repository**, then **Connect with GitHub**
-4. Install the **Hostinger GitHub App** and grant it access to
-   `itbitez/mariam-automobile`
-5. Select the repository
+From your computer, with `.env.local` filled in:
 
-## 2. Confirm the build settings
+```bash
+npm run admin:create -- you@example.com "a-strong-password"
+```
 
-Hostinger auto-detects most of this. Check it matches:
+Run it again any time to change the password.
 
-| Setting | Value |
-| --- | --- |
-| Framework preset | Next.js |
-| Branch | `main` |
-| Node.js version | 20 or 22 |
-| Package manager | npm |
-| Build command | `npm run build` |
-| Output directory | `.next` |
+## 3. Deploy the app
 
-## 3. Add the environment variables — *before* you click Deploy
+1. hPanel → **Websites → Add Website → Node.js web app**
+2. **Import Git repository → Connect with GitHub**, grant access to `mariam-automobile`
+3. Confirm: branch `main`, Node 20 or 22, build `npm run build`, output `.next`
+
+## 4. Environment variables — set these *before* the first build
 
 | Name | Value |
 | --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://ciundvubddnvwpvnnjgi.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | the anon key from your local `.env.local` |
+| `MYSQL_HOST` | the **database server** hostname, e.g. `srvNNN.hstgr.io` — **not** your website domain. hPanel shows it on the Remote MySQL page |
+| `MYSQL_PORT` | `3306` |
+| `MYSQL_DATABASE` | your database name |
+| `MYSQL_USER` | your database user |
+| `MYSQL_PASSWORD` | your database password |
+| `UPLOAD_DIR` | an absolute path **outside** the app folder (see below) |
 | `NEXT_PUBLIC_SITE_URL` | `https://mariamautomobile.com` |
 
-> **This is the step that breaks deployments.** `NEXT_PUBLIC_*` values are baked
-> into the JavaScript at build time, not read at runtime. If they are missing
-> when Hostinger builds, the site still compiles, but every car, price and stat
-> comes back empty and `/admin` shows a "Supabase is not configured" notice
-> instead of the login form. Adding the variables afterwards is **not enough** —
-> you have to trigger a fresh **build**, not just restart the app.
-
-The anon key is safe to put here; it ships inside the browser JavaScript by
-design, and your Supabase row-level security policies are what actually protect
-the data. It is not the same as the `service_role` key, which must never leave
-your Supabase dashboard and is not used anywhere in this project.
-
-## 4. Deploy
-
-Click **Deploy** and watch the build log. A clean build ends with a route table
-listing `/`, `/cars`, `/cars/[id]` and `/admin`.
+> **`UPLOAD_DIR` is the one that will bite you.** Deploying replaces the app
+> directory. Anything stored inside it — including every photo your customers
+> uploaded — is destroyed on release. Point `UPLOAD_DIR` at a path that survives
+> a deploy, such as `/home/uXXXXXXXX/mariam-uploads`. Verify it in
+> **Admin → Database setup**, which reports the resolved path and whether it is
+> writable.
+>
+> Unlike the old Supabase keys, the MySQL settings are read on the server at
+> runtime, so they are *not* baked into the JavaScript bundle. Changing them
+> only needs a restart, not a rebuild.
 
 ## 5. Point the domain and enable SSL
 
 Attach the domain in hPanel and turn on the free SSL certificate. The app sends
-an HSTS header in production, so it should only ever be served over HTTPS.
+HSTS in production, so it should only ever be served over HTTPS.
 
 ## 6. Check it worked
 
-- `https://mariamautomobile.com` — cars load from Supabase
+- `/` — cars load
 - `/cars` — filters work
-- `/admin` — the login form appears (**not** a "Supabase is not configured"
-  notice; if you see that, step 3 was missed)
-- Submit the homepage enquiry form, then confirm it lands in **Admin → Leads**
+- `/happy-customers` — gallery or its empty state
+- `/admin` — you can sign in
+- **Admin → Database setup** — all tables green, upload folder writable
+- Submit the homepage enquiry form and confirm it appears in **Admin → Leads**
 
 ---
 
-## Shipping changes after that
+## Shipping changes
 
 ```bash
 git add -A
@@ -91,37 +79,39 @@ git commit -m "describe the change"
 git push
 ```
 
-Hostinger's GitHub App gets the webhook, rebuilds, and swaps the site over. No
-ZIP, no upload, no hPanel visit.
-
-**Content** — cars, photos, prices, homepage text, calculator settings — is
-edited in the admin panel and appears live within about a minute. That never
-needs a deploy at all.
+Hostinger rebuilds automatically. Content edits made in the admin panel appear
+on the live site within about a minute and never need a deploy.
 
 ---
 
-# Route B — manual ZIP upload (fallback)
+## Local development
 
-Only if the GitHub connection is unavailable.
+`.env.local` holds the same variables. To reach the Hostinger database from your
+own machine, add your IP under **hPanel → Databases → Remote MySQL** first, then:
 
-1. `npm run package` → produces `mariam-automobile-deploy.zip`
-2. hPanel → **Websites → Add Website → Node.js web app**
-3. Choose **Upload your website files** and select the ZIP
-4. Same build settings and environment variables as Route A above
+```bash
+npm run db:ping      # confirms the connection and lists the tables
+npm run dev
+```
 
-The package deliberately omits `node_modules`, `.next`, `.env.local` and the old
-`legacy/` HTML — Hostinger installs dependencies and builds it there.
+Useful scripts:
 
-Every code change means a fresh `npm run package` and re-upload, which is why
-Route A is better.
+| Command | What it does |
+| --- | --- |
+| `npm run db:ping` | Connection check and table list |
+| `npm run db:verify` | Prints rows as the site will read them |
+| `npm run migrate:import` | Loads `mysql/data/*.json` into MySQL |
+| `npm run admin:create` | Creates or updates an admin login |
+| `npm run package` | Builds the manual-upload ZIP (fallback to Git deploy) |
 
 ---
 
 ## Notes
 
-- Supabase stays where it is. Hostinger only hosts the website.
-- Uploaded car photos live in Supabase Storage, so they survive redeploys.
-- `.env.local` is gitignored and never leaves your machine. The values live in
-  hPanel's environment variables instead.
-- If the build fails with an out-of-memory error, ask Hostinger support to raise
-  the build memory limit.
+- Uploaded photos are served by `/api/uploads/...`, not from `public/`, because
+  they live outside the app directory.
+- `mysql/data/` holds the one-off export taken from the old Supabase project.
+  Keep it as a backup; it is not read at runtime.
+- Every admin API route checks the session cookie server side. There is no row
+  level security behind it any more, so that check is the only thing protecting
+  the database.

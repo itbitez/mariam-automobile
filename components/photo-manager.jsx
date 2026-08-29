@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import MediaLibrary, { MEDIA_BUCKET } from "@/components/media-library";
-import { getSupabaseClient } from "@/lib/supabase-client";
+import MediaLibrary from "@/components/media-library";
+import { media } from "@/lib/admin-api";
 
-const supabase = getSupabaseClient();
 const MAX_BYTES = 5 * 1024 * 1024;
 
 const I = {
@@ -149,21 +148,19 @@ export default function PhotoManager({ photos, onChange, onNotify }) {
     if (!ok.length) return;
 
     setUploading(true);
-    const urls = [];
-    for (const file of ok) {
-      const path =
-        Date.now() + "-" + Math.random().toString(36).slice(2, 7) + "-" + file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-      const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, file, {
-        upsert: false,
-        contentType: file.type,
-      });
-      if (error) {
-        onNotify?.({ msg: "Upload failed: " + error.message, type: "err" });
-        continue;
-      }
-      urls.push(supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl);
-    }
+    // One request for the whole batch — the route saves each file, catalogues
+    // it in `media`, and returns the served URLs.
+    const { data, error } = await media.upload(ok);
     setUploading(false);
+
+    if (error) {
+      onNotify?.({ msg: "Upload failed: " + error.message, type: "err" });
+      return;
+    }
+    const urls = (data?.media || []).map((m) => m.url);
+    if (data?.skipped?.length) {
+      onNotify?.({ msg: data.skipped.join("; "), type: "err" });
+    }
     if (urls.length) {
       add(urls);
       onNotify?.({ msg: `Uploaded ${urls.length} photo${urls.length > 1 ? "s" : ""}.`, type: "ok" });

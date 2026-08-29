@@ -28,7 +28,7 @@ const INCLUDE = [
 ];
 
 // Useful to have alongside, but not required at runtime.
-const OPTIONAL = ["supabase", "DEPLOY.md", ".env.example"];
+const OPTIONAL = ["mysql", "DEPLOY.md", ".env.example"];
 
 function human(bytes) {
   if (bytes < 1024) return bytes + " B";

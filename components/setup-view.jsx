@@ -1,47 +1,28 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getSupabaseClient } from "@/lib/supabase-client";
 
-const supabase = getSupabaseClient();
 
 const CHECKS = [
-  {
-    key: "cars",
-    label: "Cars",
-    what: "Your vehicle listings.",
-    probe: () => supabase.from("cars").select("id").limit(1),
-    file: "supabase/setup.sql",
-  },
-  {
-    key: "home_content",
-    label: "Homepage content",
-    what: "Editable text for every homepage section.",
-    probe: () => supabase.from("home_content").select("id").limit(1),
-    file: "supabase/setup.sql",
-  },
-  {
-    key: "site_settings",
-    label: "Site settings",
-    what: "Phone, WhatsApp, address and opening hours.",
-    probe: () => supabase.from("site_settings").select("id").limit(1),
-    file: "supabase/setup.sql",
-  },
+  { key: "cars", label: "Cars", what: "Your vehicle listings." },
+  { key: "home_content", label: "Homepage content", what: "Editable text for every homepage section." },
+  { key: "site_settings", label: "Site settings", what: "Phone, WhatsApp, address and opening hours." },
   {
     key: "calc_settings",
     label: "Calculator settings",
     what: "Slider ranges for the finance estimator. Without this the calculator uses built-in defaults and cannot be saved.",
-    probe: () => supabase.from("calc_settings").select("id").limit(1),
-    file: "supabase/migration-calc-settings.sql",
   },
   {
     key: "leads",
     label: "Leads",
     what: "Stores every enquiry submitted from the website. Without this, enquiries cannot be saved.",
-    probe: () => supabase.from("leads").select("id").limit(1),
-    file: "supabase/migration-leads.sql",
   },
+  { key: "happy_customers", label: "Happy Customers", what: "Photos on the public Happy Customers page." },
+  { key: "media", label: "Media library", what: "Catalogue of uploaded images. Replaces the old storage bucket listing." },
+  { key: "admin_users", label: "Admin users", what: "Who can sign in here. Create one with: npm run admin:create" },
 ];
+
+const SCHEMA_FILE = "mysql/01-schema.sql";
 
 const I = {
   ok: (
@@ -73,17 +54,23 @@ export default function SetupView({ toast }) {
   const [state, setState] = useState({});
   const [running, setRunning] = useState(true);
   const [copied, setCopied] = useState(null);
+  const [uploads, setUploads] = useState(null);
 
   const run = useCallback(async () => {
     setRunning(true);
     const next = {};
-    for (const c of CHECKS) {
-      try {
-        const { error } = await c.probe();
-        next[c.key] = error ? { ok: false, msg: error.message } : { ok: true };
-      } catch (e) {
-        next[c.key] = { ok: false, msg: e.message };
+    // One server-side call now covers every table — the browser has no
+    // database access to probe with any more.
+    const res = await fetch("/api/admin/health", { credentials: "same-origin" });
+    const body = await res.json().catch(() => null);
+
+    if (!body || body.ok === false) {
+      for (const c of CHECKS) next[c.key] = { ok: false, msg: body?.error || "Could not reach the database" };
+    } else {
+      for (const chk of body.checks || []) {
+        next[chk.table] = chk.ok ? { ok: true, rows: chk.rows } : { ok: false, msg: chk.error };
       }
+      setUploads(body.uploads || null);
     }
     setState(next);
 
@@ -95,7 +82,6 @@ export default function SetupView({ toast }) {
   }, [run]);
 
   const missing = CHECKS.filter((c) => state[c.key] && !state[c.key].ok);
-  const files = [...new Set(missing.map((m) => m.file))];
 
   async function copy(text, key) {
     try {
@@ -125,7 +111,7 @@ export default function SetupView({ toast }) {
         <div>
           <h1>Database setup</h1>
           <div className="crumb">
-            Checks that every table this admin panel needs exists in your Supabase project.
+            Checks that every table this admin panel needs exists in your MySQL database.
           </div>
         </div>
         <div className="top-actions">
@@ -153,8 +139,8 @@ export default function SetupView({ toast }) {
             <b>
               {missing.length} table{missing.length > 1 ? "s are" : " is"} missing.
             </b>{" "}
-            Open your Supabase dashboard → <b>SQL Editor</b> → <b>New query</b>, paste the file
-            {files.length > 1 ? "s" : ""} listed below, and press Run. It only needs doing once.
+            Open <b>hPanel → phpMyAdmin → SQL</b>, paste <b>{SCHEMA_FILE}</b>, and press Go. It only
+            needs doing once.
           </span>
         </div>
       )}
@@ -178,7 +164,8 @@ export default function SetupView({ toast }) {
                 <span className="setup-txt">
                   <b>{c.label}</b>
                   <span>{c.what}</span>
-                  {s && !s.ok && <em>Run {c.file}</em>}
+                  {s && !s.ok && <em>Run {SCHEMA_FILE}</em>}
+                  {s && s.ok && s.rows !== undefined && <em>{s.rows} row{s.rows === 1 ? "" : "s"}</em>}
                 </span>
                 <span className={"pill " + (s ? (s.ok ? "ok" : "bad") : "info")}>
                   {s ? (s.ok ? "Ready" : "Missing") : "Checking"}
@@ -189,27 +176,53 @@ export default function SetupView({ toast }) {
         </div>
       </div>
 
-      {!running && files.length > 0 && (
+      {!running && missing.length > 0 && (
         <div className="card">
           <div className="card-head">
             <div>
               <h2>What to run</h2>
-              <p>Copy each file&apos;s contents from your project folder into the Supabase SQL editor.</p>
+              <p>Open hPanel → phpMyAdmin → SQL and paste this file from your project.</p>
             </div>
           </div>
           <div className="setup-files">
-            {files.map((f) => (
-              <div className="setup-file" key={f}>
-                <code>{f}</code>
-                <button className="btn btn-sm" onClick={() => copy(f, f)}>
-                  {copied === f ? I.ok : I.copy}
-                  {copied === f ? "Copied" : "Copy path"}
-                </button>
-              </div>
-            ))}
+            <div className="setup-file">
+              <code>{SCHEMA_FILE}</code>
+              <button className="btn btn-sm" onClick={() => copy(SCHEMA_FILE, SCHEMA_FILE)}>
+                {copied === SCHEMA_FILE ? I.ok : I.copy}
+                {copied === SCHEMA_FILE ? "Copied" : "Copy path"}
+              </button>
+            </div>
           </div>
           <div className="hint" style={{ marginTop: 12 }}>
-            The files live in your project at the paths above. Each one is safe to run more than once.
+            Safe to run more than once — it only creates what is missing.
+          </div>
+        </div>
+      )}
+
+      {!running && uploads && (
+        <div className="card">
+          <div className="card-head">
+            <div>
+              <h2>Image storage</h2>
+              <p>Uploads are written outside the app folder so a redeploy cannot delete them.</p>
+            </div>
+          </div>
+          <div className="setup-list">
+            <div className={"setup-row" + (uploads.ok ? "" : " bad")}>
+              <span className={"setup-dot " + (uploads.ok ? "ok" : "bad")}>{uploads.ok ? I.ok : I.bad}</span>
+              <span className="setup-txt">
+                <b>Upload folder</b>
+                <span>{uploads.path}</span>
+                {uploads.ok ? (
+                  <em>
+                    {uploads.files} file{uploads.files === 1 ? "" : "s"} stored
+                  </em>
+                ) : (
+                  <em>{uploads.error}</em>
+                )}
+              </span>
+              <span className={"pill " + (uploads.ok ? "ok" : "bad")}>{uploads.ok ? "Writable" : "Not writable"}</span>
+            </div>
           </div>
         </div>
       )}

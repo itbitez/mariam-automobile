@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { HOME, CALC, HOME_LIMIT } from "@/lib/data";
 import { lakh, slugify } from "@/lib/format";
 import { LOGO } from "@/lib/site";
-import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase-client";
+import { auth, cars as carsApi, content as contentApi, leads as leadsApi } from "@/lib/admin-api";
 import { MediaBrowser } from "@/components/media-library";
 import PhotoManager from "@/components/photo-manager";
 import CalcView from "@/components/calc-view";
@@ -12,7 +12,6 @@ import SetupView from "@/components/setup-view";
 import HappyView from "@/components/happy-view";
 import "./admin.css";
 
-const supabase = getSupabaseClient();
 
 const IC = {
   grid: (
@@ -270,7 +269,7 @@ function Login() {
     if (busy) return;
     setBusy(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { error } = await auth.signIn(email.trim(), password);
     setBusy(false);
     if (error) setError(error.message);
   }
@@ -384,28 +383,25 @@ export default function AdminClient() {
   const [editingId, setEditingId] = useState(null);
   const [toast, setToast] = useState(null);
   const editingRef = useRef(null);
-  const configured = isSupabaseConfigured();
 
   useEffect(() => {
     editingRef.current = editingId;
   }, [editingId]);
 
   useEffect(() => {
-    if (!configured) return;
     let alive = true;
-    supabase.auth.getSession().then(({ data }) => {
+    // There is no onAuthStateChange equivalent — the session lives in an
+    // httpOnly cookie the browser cannot observe. One check on mount is enough;
+    // any later expiry surfaces as a 401 from whichever request hits it.
+    auth.session().then(({ data }) => {
       if (!alive) return;
-      setSession(data.session);
+      setSession(data?.admin || null);
       setAuthLoading(false);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
     });
     return () => {
       alive = false;
-      sub.subscription.unsubscribe();
     };
-  }, [configured]);
+  }, []);
 
   useEffect(() => {
     if (!session) return;
@@ -413,21 +409,28 @@ export default function AdminClient() {
     setDataLoading(true);
     (async () => {
       const [c, h, s, k] = await Promise.all([
-        supabase.from("cars").select("*").order("featured", { ascending: false }).order("year", { ascending: false }),
-        supabase.from("home_content").select("*").eq("id", 1).maybeSingle(),
-        supabase.from("site_settings").select("*").eq("id", 1).maybeSingle(),
-        supabase.from("calc_settings").select("*").eq("id", 1).maybeSingle(),
+        carsApi.list(),
+        contentApi.get("home"),
+        contentApi.get("settings"),
+        contentApi.get("calc"),
       ]);
       if (!alive) return;
-      const cars = (c.data || []).map((row) => ({
+      // MySQL JSON columns arrive parsed on some driver versions and as a
+      // string on others, so normalise both.
+      const asArray = (v) => {
+        if (Array.isArray(v)) return v;
+        if (typeof v === "string") { try { const p = JSON.parse(v); return Array.isArray(p) ? p : []; } catch { return []; } }
+        return [];
+      };
+      const cars = (c.data?.cars || []).map((row) => ({
         ...row,
         showHome: !!row.show_home,
         featured: !!row.featured,
         price: Number(row.price) || 0,
-        photos: Array.isArray(row.photos) ? row.photos : [],
-        features: Array.isArray(row.features) ? row.features : [],
+        photos: asArray(row.photos),
+        features: asArray(row.features),
       }));
-      const hrow = h.data || {};
+      const hrow = h.data?.home || {};
       const home = {
         hero: { ...HOME.hero, ...(hrow.hero || {}) },
         trust: Array.isArray(hrow.trust) && hrow.trust.length ? hrow.trust : HOME.trust,
@@ -465,7 +468,7 @@ export default function AdminClient() {
     })().catch(() => {
       if (!alive) return;
       setDataLoading(false);
-      setToast({ msg: "Could not load data from Supabase.", type: "err" });
+      setToast({ msg: "Could not load data from the database.", type: "err" });
     });
     return () => {
       alive = false;
@@ -532,19 +535,19 @@ export default function AdminClient() {
   }
 
   async function addCar(car) {
-    const { error } = await supabase.from("cars").insert(toRow(car));
+    const { error } = await carsApi.save({ ...car, showHome: car.showHome });
     if (error) throw error;
     setDb((d) => ({ ...d, cars: [...d.cars, { ...car, show_home: car.showHome }] }));
   }
 
   async function updateCar(id, car) {
-    const { error } = await supabase.from("cars").update(toRow(car)).eq("id", id);
+    const { error } = await carsApi.save({ ...car, id, showHome: car.showHome });
     if (error) throw error;
     setDb((d) => ({ ...d, cars: d.cars.map((c) => (c.id === id ? { ...c, ...toRow(car), showHome: car.showHome } : c)) }));
   }
 
   async function deleteCar(id) {
-    const { error } = await supabase.from("cars").delete().eq("id", id);
+    const { error } = await carsApi.remove(id);
     if (error) throw error;
     setDb((d) => ({ ...d, cars: d.cars.filter((c) => c.id !== id) }));
   }
@@ -575,9 +578,8 @@ export default function AdminClient() {
   }
 
   async function saveHome(h) {
-    const { error } = await supabase.from("home_content").upsert(
-      {
-        id: 1,
+    const { error } = await contentApi.put("home", {
+      home: {
         hero: h.hero,
         trust: h.trust,
         inventory: h.inventory,
@@ -585,61 +587,37 @@ export default function AdminClient() {
         faq: { kicker: h.faq.kicker, title: h.faq.title, items: h.faq.items },
         cta: h.cta,
         contact: h.contact,
-        updated_at: new Date().toISOString(),
       },
-      { onConflict: "id" }
-    );
+    });
     if (error) throw error;
     setDb((d) => ({ ...d, home: h }));
   }
 
   async function saveSettings(s) {
-    const { error } = await supabase.from("site_settings").upsert(
-      {
-        id: 1,
+    const { error } = await contentApi.put("settings", {
+      settings: {
         phone: s.phone,
         whatsapp: s.wa,
         address: s.address,
-        hours_week: s.hoursWeek,
-        hours_fri: s.hoursFri,
+        hoursWeek: s.hoursWeek,
+        hoursFri: s.hoursFri,
         emergency: s.emergency,
-        updated_at: new Date().toISOString(),
       },
-      { onConflict: "id" }
-    );
+    });
     if (error) throw error;
     setDb((d) => ({ ...d, settings: s }));
   }
 
   async function saveCalc(c) {
-    const { error } = await supabase.from("calc_settings").upsert(calcToRow(c), { onConflict: "id" });
+    const { error } = await contentApi.put("calc", { calc: calcToRow(c) });
     if (error) throw error;
     setDb((d) => ({ ...d, calc: c }));
   }
 
-  // A build made without the env vars produces a panel that cannot reach
-  // Supabase at all. Say so plainly rather than hanging on the loading state.
-  if (!configured) {
-    return (
-      <div className="auth-boot">
-        <div className="boot-card">
-          <h1>Supabase is not configured</h1>
-          <p>
-            This build was made without <code>NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, so the admin panel cannot connect to your database.
-          </p>
-          <p>
-            Add both to your hosting environment variables and <b>rebuild</b> — these values are baked into the
-            JavaScript at build time, so restarting the server alone will not pick them up.
-          </p>
-          <a className="btn btn-primary" href="/">
-            Back to the website
-          </a>
-        </div>
-      </div>
-    );
-  }
-
+  // The old build-time "Supabase is not configured" screen is gone: MySQL
+  // credentials are read on the server at runtime, so there is nothing that can
+  // be missing from the JavaScript bundle. A connection problem now surfaces as
+  // a normal error from whichever request hit it.
   if (authLoading) return <div className="auth-boot">Checking your session…</div>;
 
   if (!session) return <Login />;
@@ -706,7 +684,7 @@ export default function AdminClient() {
           <button
             type="button"
             onClick={async () => {
-              await supabase.auth.signOut();
+              await auth.signOut();
               setSession(null);
             }}
           >
@@ -774,7 +752,7 @@ export default function AdminClient() {
                 setToast({
                   msg:
                     /relation .* does not exist/i.test(e.message)
-                      ? "Table missing — run supabase/migration-calc-settings.sql in the Supabase SQL editor first."
+                      ? "Table missing — run mysql/01-schema.sql in phpMyAdmin first."
                       : "Save failed: " + e.message,
                   type: "err",
                 });
@@ -1864,14 +1842,10 @@ function LeadsView({ toast }) {
   useEffect(() => {
     let alive = true;
     (async () => {
-      const { data, error: err } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(500);
+      const { data, error: err } = await leadsApi.list();
       if (!alive) return;
       if (err) setError(err.message);
-      else setRows(data || []);
+      else setRows(data?.leads || []);
       setLoading(false);
     })();
     return () => {
@@ -1881,7 +1855,7 @@ function LeadsView({ toast }) {
 
   async function setStatus(id, status) {
     setBusy(id);
-    const { error: err } = await supabase.from("leads").update({ status }).eq("id", id);
+    const { error: err } = await leadsApi.setStatus(id, status);
     setBusy(null);
     if (err) return toast({ msg: "Update failed: " + err.message, type: "err" });
     setRows((r) => r.map((x) => (x.id === id ? { ...x, status } : x)));
@@ -1895,7 +1869,7 @@ function LeadsView({ toast }) {
     }
     setConfirmId(null);
     setBusy(id);
-    const { error: err } = await supabase.from("leads").delete().eq("id", id);
+    const { error: err } = await leadsApi.remove(id);
     setBusy(null);
     if (err) return toast({ msg: "Delete failed: " + err.message, type: "err" });
     setRows((r) => r.filter((x) => x.id !== id));
@@ -1939,7 +1913,7 @@ function LeadsView({ toast }) {
           {IC.alert}
           <span>
             {/relation .* does not exist|Could not find the table/i.test(error)
-              ? "Table missing — run supabase/migration-leads.sql in the Supabase SQL editor first."
+              ? "Table missing — run mysql/01-schema.sql in phpMyAdmin first."
               : error}
           </span>
         </div>
