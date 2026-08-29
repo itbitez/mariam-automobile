@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { HOME_LIMIT } from "@/lib/data";
 import { SITE, waLink, telLink, mapsLink } from "@/lib/site";
@@ -7,14 +7,13 @@ import { getCars, getHome, getSettings, getCalc } from "@/lib/query";
 import HomeClient from "@/components/home-client";
 import WaGlyph from "@/components/wa-glyph";
 import SiteFooter from "@/components/site-footer";
+import SiteHeader from "@/components/site-header";
 import CarCard from "@/components/car-card";
 import "./home.css";
 
 export const revalidate = 60;
 
 const IMG = {
-  logoLight: "/img/logo-light.webp",
-  logoDark: "/img/logo-dark.webp",
   logoFooter: "/img/logo-footer.webp",
   hero: "/img/hero-showroom.webp",
   carBody: "/img/1cc5aa91e239badf.webp",
@@ -68,67 +67,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <div className="progress" id="progress"></div>
+      <SiteHeader site={site} tel={telLink(undefined, site)} active="/" isHome />
 
-      {/* NAV */}
-      <nav id="nav">
-        <Link className="logo-link" href="#top">
-          <img className="logo logo-light" src={IMG.logoLight} width={400} height={178} alt="Mariam Automobile" />
-          <img className="logo logo-dark" decoding="async" src={IMG.logoDark} width={400} height={178} alt="Mariam Automobile" />
-        </Link>
-        <div className="nav-mid">
-          <Link href="#top" className="active">
-            Home
-          </Link>
-          <Link href="/cars">Cars</Link>
-          <Link href="/happy-customers">Happy Customers</Link>
-          <Link href="#process">How It Works</Link>
-          <Link href="#finance">Finance</Link>
-          <Link href="#faq">FAQ</Link>
-          <Link href="#contact">Contact</Link>
-        </div>
-        <button className="burger" id="burger" aria-label="Open menu" aria-expanded="false">
-          <i></i>
-          <i></i>
-          <i></i>
-        </button>
-        <a href={telLink(undefined, site)} className="btn btn-red">
-          {PHONE_ICON}
-          {site.phone}
-        </a>
-      </nav>
-
-      <div className="drawer" id="drawer">
-        <a className="dlink" href="#top">
-          Home{ARROW}
-        </a>
-        <a className="dlink" href="/cars">
-          Cars{ARROW}
-        </a>
-        <a className="dlink" href="/happy-customers">
-          Happy Customers{ARROW}
-        </a>
-        <a className="dlink" href="#process">
-          How It Works{ARROW}
-        </a>
-        <a className="dlink" href="#finance">
-          Finance{ARROW}
-        </a>
-        <a className="dlink" href="#faq">
-          FAQ{ARROW}
-        </a>
-        <a className="dlink" href="#contact">
-          Contact{ARROW}
-        </a>
-        <div className="drawer-cta">
-          <a href={telLink(undefined, site)} className="btn btn-red">
-            {PHONE_ICON}Call {site.phone}
-          </a>
-          <a href={waLink(undefined, site)} className="btn btn-wa">
-            <WaGlyph />WhatsApp us
-          </a>
-        </div>
-      </div>
 
       {/* HERO */}
       <header className="hero" id="top">

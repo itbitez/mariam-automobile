@@ -66,20 +66,14 @@ export default function CarsClient({ cars, settings }) {
     }
 
     /* scroll chrome */
-    const progress = document.getElementById("progress");
-    const nav = document.getElementById("nav");
     const headBg = document.getElementById("headBg");
-    const fab = document.getElementById("fab");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let ticking = false;
 
     function frame() {
       const h = document.documentElement;
       const top = h.scrollTop;
-      progress.style.transform = "scaleX(" + top / (h.scrollHeight - h.clientHeight || 1) + ")";
-      nav.classList.toggle("scrolled", top > 60);
       if (headBg && !reduceMotion) headBg.style.transform = "translate3d(0," + top * 0.22 + "px,0)";
-      fab.classList.toggle("show", top > 500);
       ticking = false;
     }
     const onScroll = () => {

@@ -3,7 +3,7 @@ import { getHappyCustomers, getSettings } from "@/lib/query";
 import HappyGallery from "@/components/happy-gallery";
 import WaGlyph from "@/components/wa-glyph";
 import SiteFooter from "@/components/site-footer";
-import MobileNav from "@/components/mobile-nav";
+import SiteHeader from "@/components/site-header";
 import "./happy.css";
 
 export const revalidate = 60;
@@ -16,16 +16,8 @@ export const metadata = {
 };
 
 const IMG = {
-  logoLight: "/img/logo-light.webp",
-  logoDark: "/img/logo-dark.webp",
   headBg: "https://images.unsplash.com/photo-1761738217531-44a249d1dc87?fm=jpg&q=72&w=2200&auto=format&fit=crop",
 };
-
-const PHONE_ICON = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
-  </svg>
-);
 
 const CAMERA = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -40,31 +32,7 @@ export default async function HappyCustomersPage() {
 
   return (
     <>
-      <div className="progress" id="progress"></div>
-
-      {/* NAV */}
-      <nav id="nav">
-        <a className="logo-link" href="/">
-          <img className="logo logo-light" src={IMG.logoLight} width={400} height={178} alt="Mariam Automobile" />
-          <img className="logo logo-dark" decoding="async" src={IMG.logoDark} width={400} height={178} alt="Mariam Automobile" />
-        </a>
-        <div className="nav-mid">
-          <a href="/">Home</a>
-          <a href="/cars">Cars</a>
-          <a href="/happy-customers" className="active">
-            Happy Customers
-          </a>
-          <a href="/#process">How It Works</a>
-          <a href="/#finance">Finance</a>
-          <a href="/#faq">FAQ</a>
-          <a href="/#contact">Contact</a>
-        </div>
-        <a href={telLink(undefined, site)} className="btn btn-red">
-          {PHONE_ICON}
-          {site.phone}
-        </a>
-        <MobileNav phone={site.phone} tel={telLink(undefined, site)} active="/happy-customers" />
-      </nav>
+      <SiteHeader site={site} tel={telLink(undefined, site)} active="/happy-customers" />
 
       {/* PAGE HEAD */}
       <header className="page-head">

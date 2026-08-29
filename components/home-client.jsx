@@ -73,12 +73,9 @@ export default function HomeClient({ settings }) {
     if (rail) cio.observe(rail);
 
     /* ---------- scroll chrome ---------- */
-    const progress = document.getElementById("progress");
-    const nav = document.getElementById("nav");
     const heroMedia = document.getElementById("heroMedia");
     const ctaBg = document.getElementById("ctaBg");
     const finImg = document.getElementById("finImg");
-    const fab = document.getElementById("fab");
     let ticking = false;
 
     const journey = document.getElementById("process");
@@ -194,9 +191,6 @@ export default function HomeClient({ settings }) {
     function frame() {
       const h = document.documentElement;
       const top = h.scrollTop;
-      progress.style.transform = "scaleX(" + top / (h.scrollHeight - h.clientHeight || 1) + ")";
-      nav.classList.toggle("scrolled", top > 60);
-      fab.classList.toggle("show", top > 600);
 
       if (!reduce) {
         heroMedia.style.transform = "translate3d(0," + top * 0.28 + "px,0)";
@@ -287,34 +281,6 @@ export default function HomeClient({ settings }) {
     }
     updateStatus();
     openTimer = setInterval(updateStatus, 60000);
-
-    /* ---------- mobile drawer ---------- */
-    document.body.style.overflow = "";
-    const burger = document.getElementById("burger");
-    const drawer = document.getElementById("drawer");
-
-    function setMenu(open) {
-      document.body.classList.toggle("menu-open", open);
-      burger.setAttribute("aria-expanded", open ? "true" : "false");
-      burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-      document.body.style.overflow = open ? "hidden" : "";
-    }
-
-    const onBurger = () => setMenu(!document.body.classList.contains("menu-open"));
-    const onDrawerClick = (ev) => {
-      if (ev.target.closest("a")) setMenu(false);
-    };
-    const onKey = (ev) => {
-      if (ev.key === "Escape") setMenu(false);
-    };
-    const onResizeClose = () => {
-      if (window.innerWidth > 900) setMenu(false);
-    };
-
-    burger.addEventListener("click", onBurger);
-    drawer.addEventListener("click", onDrawerClick);
-    document.addEventListener("keydown", onKey);
-    window.addEventListener("resize", onResizeClose);
 
     /* ---------- lead form -> saved as a lead in the admin panel ---------- */
     const leadForm = document.getElementById("leadForm");
@@ -483,11 +449,7 @@ export default function HomeClient({ settings }) {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onOrient);
-      window.removeEventListener("resize", onResizeClose);
       clearInterval(openTimer);
-      burger.removeEventListener("click", onBurger);
-      drawer.removeEventListener("click", onDrawerClick);
-      document.removeEventListener("keydown", onKey);
       leadForm.removeEventListener("submit", onSubmit);
       lfName.removeEventListener("input", clearErr);
       lfPhone.removeEventListener("input", clearErr);
