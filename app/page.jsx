@@ -397,12 +397,18 @@ export default async function HomePage() {
       <section className="finance wrap" id="finance">
         <div className="fin-grid">
           <div className="fin-visual rv wipe" id="finVisual">
+            {/* The panel is portrait but the source is landscape (1200x629), so
+                object-fit: cover uses less than half the width and scales it up.
+                Sizing this at 46vw made Next serve a 662px variant, which then
+                had to stretch 2.2x — visibly soft. Ask for the full-width
+                variant instead; the crop eats the rest. */}
             <Image
               id="finImg"
               src={IMG.finance}
-              alt=""
+              alt="Mariam Automobile showroom"
               fill
-              sizes="(max-width: 1000px) 100vw, 46vw"
+              quality={82}
+              sizes="(max-width: 1000px) 100vw, 1200px"
             />
           </div>
 

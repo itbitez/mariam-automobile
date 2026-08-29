@@ -250,11 +250,12 @@ function RowLine({ value, placeholder, onChange, onRemove, label }) {
 }
 
 /* ============ login ============ */
+// Facts worth knowing before you start, not a feature pitch. Whoever is
+// signing in already owns the thing.
 const AUTH_POINTS = [
-  "Add, edit and retire cars in seconds",
-  "Control which cars appear on the homepage",
-  "Upload photos straight from your phone",
-  "Tune the finance calculator to your banks",
+  "Edits appear on the site within a minute",
+  "Sold cars leave the listings but stay in the archive",
+  "Photos upload straight from your phone",
 ];
 
 function Login({ onSignedIn }) {
@@ -293,12 +294,12 @@ function Login({ onSignedIn }) {
 
         <div>
           <h2>
-            Your showroom,
+            The showroom,
             <br />
-            managed from anywhere.
+            behind the scenes.
           </h2>
           <p className="a-lede">
-            Everything on the public site — stock, photos, pricing and copy — is edited from right here.
+            Stock, photos, prices and the words on every page — all of it is edited from here.
           </p>
           <div className="a-list">
             {AUTH_POINTS.map((p) => (
@@ -942,7 +943,7 @@ function Dashboard({ db, nav, startAdd, startEdit }) {
           <div className="card-head">
             <div>
               <h2>Quick actions</h2>
-              <p>Common tasks, one click away.</p>
+              <p>Shortcuts.</p>
             </div>
           </div>
           <div className="quick-grid" style={{ gridTemplateColumns: "1fr" }}>
@@ -983,7 +984,7 @@ function Dashboard({ db, nav, startAdd, startEdit }) {
           <div className="card-head">
             <div>
               <h2>Recently added</h2>
-              <p>Latest cars in the database.</p>
+              <p>Most recently added or edited.</p>
             </div>
           </div>
           <div className="recent-list">
@@ -1163,7 +1164,7 @@ function CarsView({ db, startAdd, startEdit, toggleHome, deleteCar, toast }) {
         {list.length === 0 && (
           <div className="empty">
             <h3>No cars match</h3>
-            <p>Try a different search or filter — or add a new car to get started.</p>
+            <p>Nothing matches that search. Clear the filters, or add a car.</p>
             <button className="btn btn-primary" onClick={startAdd}>
               Add car
             </button>
