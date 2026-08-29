@@ -36,7 +36,7 @@ Run it again any time to change the password.
 
 | Name | Value |
 | --- | --- |
-| `MYSQL_HOST` | the **database server** hostname, e.g. `srvNNN.hstgr.io` — **not** your website domain. hPanel shows it on the Remote MySQL page |
+| `MYSQL_HOST` | **Copy the real value from hPanel → Databases → Remote MySQL**, which prints "Our MySQL server hostname is: …". It looks like `srv123.hstgr.io`. It is **not** your website domain, and `srvNNN` is not a real host — pasting a placeholder gives `ENOTFOUND` and the site silently falls back to seed data |
 | `MYSQL_PORT` | `3306` |
 | `MYSQL_DATABASE` | your database name |
 | `MYSQL_USER` | your database user |
