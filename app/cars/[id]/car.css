@@ -111,13 +111,32 @@
     border: 1.5px solid transparent;
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), background 0.25s, color 0.25s, border-color 0.25s;
+    /* Was tied to a JS "magnetic" effect that translated the button toward
+       the cursor. The target moved under the pointer as you reached for it.
+       A 1px settle on press is all the feedback a button needs. */
+    transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s, color 0.2s, border-color 0.2s;
   }
 
   .btn svg {
     width: 17px;
     height: 17px;
     flex: none;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    pointer-events: none;
   }
 
   .btn-red {

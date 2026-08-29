@@ -11,7 +11,7 @@ const csp = [
   // 'unsafe-eval' no client JS runs at all and every page renders blank.
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com",
+  "img-src 'self' data: blob:",
   "font-src 'self' data:",
   // Same-origin only now; ws: covers the dev HMR socket.
   ["connect-src 'self'", isDev ? "ws: wss:" : null].filter(Boolean).join(" "),
@@ -63,7 +63,10 @@ const nextConfig = {
     deviceSizes: [360, 480, 640, 828, 1080, 1280, 1600, 1920],
     imageSizes: [64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30,
-    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+    // Every image is served from this origin now. Page headers used to be
+    // hotlinked from Unsplash, which meant a third-party CDN had to be
+    // reachable for the header to render at all.
+    remotePatterns: [],
   },
   async headers() {
     return [

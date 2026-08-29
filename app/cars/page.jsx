@@ -17,7 +17,7 @@ export const metadata = {
 
 const IMG = {
   logoFooter: "/img/logo-light.webp",
-  headBg: "https://images.unsplash.com/photo-1761738217531-44a249d1dc87?fm=jpg&q=72&w=2200&auto=format&fit=crop",
+  headBg: "/img/head-cars.webp",
 };
 
 const PIN_ICON = (

@@ -369,29 +369,10 @@ export default function HomeClient({ settings }) {
     lfName.addEventListener("input", clearErr);
     lfPhone.addEventListener("input", clearErr);
 
-    /* ---------- magnetic buttons ---------- */
-    let mags = [];
-    if (!reduce && window.matchMedia("(pointer:fine)").matches) {
-      document.querySelectorAll("[data-mag]").forEach(() => {});
-      mags = Array.prototype.slice.call(document.querySelectorAll(".btn-red, .btn-dark, .btn-wa, .btn-glass"));
-      mags.forEach((b) => {
-        const move = (e) => {
-          const r = b.getBoundingClientRect();
-          b.style.transform =
-            "translate(" +
-            (e.clientX - r.left - r.width / 2) * 0.2 +
-            "px," +
-            (e.clientY - r.top - r.height / 2) * 0.3 +
-            "px)";
-        };
-        const leave = () => {
-          b.style.transform = "";
-        };
-        b.addEventListener("mousemove", move);
-        b.addEventListener("mouseleave", leave);
-        b.__magCleanup = { move, leave };
-      });
-    }
+    /* Magnetic buttons removed. Translating a button toward the cursor on
+       mousemove means the target shifts under the pointer as you go to click
+       it — it reads as unsteady, and on a slow frame the button lags behind
+       the mouse. The hover state is CSS now. */
 
     /* ---------- accordion ---------- */
     document.querySelectorAll(".acc-q").forEach((q) => {
@@ -455,12 +436,6 @@ export default function HomeClient({ settings }) {
       lfPhone.removeEventListener("input", clearErr);
       document.querySelectorAll(".acc-q").forEach((q) => q.removeEventListener("click", q.__accCleanup));
       [price, down, term, rate].forEach((el) => el.removeEventListener("input", onCalc));
-      mags.forEach((b) => {
-        if (b.__magCleanup) {
-          b.removeEventListener("mousemove", b.__magCleanup.move);
-          b.removeEventListener("mouseleave", b.__magCleanup.leave);
-        }
-      });
       window.__homeInit = false;
     };
   }, []);

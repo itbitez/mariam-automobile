@@ -42,7 +42,7 @@ export async function generateMetadata({ params }) {
 
 const IMG = {
   logoFooter: "/img/logo-light.webp",
-  headBg: "https://images.unsplash.com/photo-1565376901308-37344a4b06ea?fm=jpg&q=72&w=2200&auto=format&fit=crop",
+  headBg: "/img/head-detail.webp",
 };
 
 const PIN_ICON = (

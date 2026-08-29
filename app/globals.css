@@ -488,3 +488,247 @@ nav.scrolled .mnav-burger i { background: #0d1218; }
   .sf-dot { animation: none; }
   .site-foot *, .site-foot *::before { transition-duration: 0.001ms !important; }
 }
+
+/* =========================================================
+   Car card — components/car-card.jsx, used by the homepage grid and the
+   cars listing. The rules lived in both page stylesheets, byte for byte;
+   the component is shared, so its styles are too.
+   ========================================================= */
+.car {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid rgba(13, 18, 24, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s;
+}
+
+/* A 4px lift reads as the card responding, not launching. The old -8px over
+   0.45s felt floaty, and a red border on hover fought with the price and the
+   status pill for attention — a darker neutral edge is enough. */
+.car:hover {
+  transform: translateY(-4px);
+  border-color: rgba(13, 18, 24, 0.22);
+  box-shadow: 0 18px 34px -22px rgba(13, 18, 24, 0.45);
+}
+
+.car:active {
+  transform: translateY(-1px);
+  transition-duration: 0.09s;
+}
+
+/* Keyboard users get the same affordance as the mouse. */
+.car:focus-visible {
+  outline: 2px solid #e41824;
+  outline-offset: 3px;
+}
+
+.car-photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #d8e4ec;
+}
+
+.car-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.car:hover .car-photo img {
+  /* 1.1 crops noticeably and, at 0.45s, lags the cursor leaving the card. */
+  transform: scale(1.045);
+}
+
+.car-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(9, 13, 18, 0.35) 0%, transparent 34%, transparent 62%, rgba(9, 13, 18, 0.55) 100%);
+  pointer-events: none;
+}
+
+.car-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.55) 48%, transparent 56%);
+  transform: translateX(-120%);
+  pointer-events: none;
+  transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.car:hover .car-shine {
+  transform: translateX(120%);
+}
+
+.tag-avail {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  font-family: var(--font-space), var(--font-fallback-mono);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #05300f;
+  background: #b9f6cd;
+  padding: 6px 11px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag-avail::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.tag-pick {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  font-family: var(--font-space), var(--font-fallback-mono);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #fff;
+  background: #e41824;
+  padding: 6px 11px;
+  border-radius: 999px;
+}
+
+.tag-year {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  font-family: var(--font-space), var(--font-fallback-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(9, 13, 18, 0.62);
+  backdrop-filter: blur(8px);
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.car-model {
+  position: absolute;
+  left: 16px;
+  bottom: 12px;
+  z-index: 3;
+  color: #fff;
+  font-family: var(--font-sora), var(--font-fallback-sans);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+
+.car-info {
+  padding: 20px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.car-info h3 {
+  font-size: 17.5px;
+  line-height: 1.25;
+  margin-bottom: 9px;
+  transition: color 0.25s;
+}
+
+.car:hover .car-info h3 {
+  color: #e41824;
+}
+
+.car-info p {
+  font-size: 14px;
+}
+
+.car-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 14px 0 16px;
+}
+
+.car-specs span {
+  font-family: var(--font-space), var(--font-fallback-mono);
+  font-size: 10.5px;
+  color: #10161d;
+  background: #eef3f8;
+  border: 1px solid rgba(13, 18, 24, 0.05);
+  border-radius: 7px;
+  padding: 6px 9px;
+}
+
+.car-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid rgba(13, 18, 24, 0.05);
+  padding-top: 16px;
+  margin-top: auto;
+}
+
+.price-ask {
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+.price-ask b {
+  display: block;
+  font-family: var(--font-sora), var(--font-fallback-sans);
+  color: #0d1218;
+  font-size: 18px;
+}
+
+.see {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #e41824;
+}
+
+.see svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.car:hover .see svg {
+  transform: translateX(4px);
+}
+
+
+/* The card carries .rv for the scroll reveal, which sets a 0.75s transition
+   (and a stagger delay) on transform. That is right while it is appearing and
+   wrong afterwards — it made the hover lift crawl and start late. Once the
+   card is in, hand transform back to the hover timing. Three classes beats
+   .rv on specificity, so page stylesheet order does not matter. */
+.car.rv.in {
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s;
+  transition-delay: 0s;
+}
