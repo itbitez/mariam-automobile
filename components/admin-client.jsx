@@ -257,7 +257,7 @@ const AUTH_POINTS = [
   "Tune the finance calculator to your banks",
 ];
 
-function Login() {
+function Login({ onSignedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -269,9 +269,18 @@ function Login() {
     if (busy) return;
     setBusy(true);
     setError(null);
-    const { error } = await auth.signIn(email.trim(), password);
+    const { data, error } = await auth.signIn(email.trim(), password);
     setBusy(false);
-    if (error) setError(error.message);
+    if (error) {
+      setError(error.message);
+      return;
+    }
+    // Supabase used to broadcast this through onAuthStateChange. Nothing
+    // broadcasts now — the session is an httpOnly cookie the browser cannot
+    // observe — so hand the signed-in admin straight to the parent. Without
+    // this the cookie is set but the panel stays on the login form until the
+    // page is reloaded.
+    onSignedIn(data.admin);
   }
 
   return (
@@ -398,8 +407,17 @@ export default function AdminClient() {
       setSession(data?.admin || null);
       setAuthLoading(false);
     });
+
+    // Any request that comes back 401 means the cookie is gone or expired.
+    const onExpired = () => {
+      setSession(null);
+      setToast({ msg: "Your session expired. Please sign in again.", type: "err" });
+    };
+    window.addEventListener("admin-unauthorized", onExpired);
+
     return () => {
       alive = false;
+      window.removeEventListener("admin-unauthorized", onExpired);
     };
   }, []);
 
@@ -450,7 +468,11 @@ export default function AdminClient() {
         why: HOME.why,
         pillars: HOME.pillars,
       };
-      const srow = s.data || {};
+      // The API wraps each payload: { ok, settings } / { ok, calc }. Reading
+      // s.data directly gave undefined for every field, so the form rendered
+      // blank — and saving that blank form would have overwritten the real
+      // contact details with empty strings.
+      const srow = s.data?.settings || {};
       const settings = {
         phone: srow.phone || "",
         wa: srow.whatsapp || "",
@@ -459,9 +481,9 @@ export default function AdminClient() {
         hoursFri: srow.hours_fri || "",
         emergency: srow.emergency || "",
       };
-      // calc_settings may not exist yet if the migration has not been run —
+      // calc_settings may not exist yet if the schema has not been run —
       // fall back to the shipped defaults rather than blanking the screen.
-      const calc = k && k.data ? calcFromRow(k.data) : { ...CALC };
+      const calc = k.data?.calc ? calcFromRow(k.data.calc) : { ...CALC };
 
       setDb({ cars, home, settings, calc });
       setDataLoading(false);
@@ -620,7 +642,7 @@ export default function AdminClient() {
   // a normal error from whichever request hit it.
   if (authLoading) return <div className="auth-boot">Checking your session…</div>;
 
-  if (!session) return <Login />;
+  if (!session) return <Login onSignedIn={setSession} />;
 
   return (
     <div className="app">
