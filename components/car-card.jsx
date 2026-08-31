@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { lakh } from "@/lib/format";
 import { PLACEHOLDER_IMG } from "@/lib/data";
+import { carStatus } from "@/lib/car-status";
 
 const ARROW = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -19,16 +20,27 @@ const ARROW = (
 export default function CarCard({ car, i = 0, sizes }) {
   const [failed, setFailed] = useState(false);
   const src = failed || !car.photos?.[0] ? PLACEHOLDER_IMG : car.photos[0];
+  const sold = car.status === "sold";
+  const status = carStatus(car.status);
 
   return (
     <Link
-      className="car rv"
+      className={sold ? "car rv car-sold" : "car rv"}
       href={`/cars/${car.id}`}
       style={{ transitionDelay: Math.min(i, 6) * 0.05 + "s" }}
       aria-label={`${car.brand} ${car.title} ${car.year} — ${lakh(car.price)}`}
     >
       <div className="car-photo">
-        {car.featured ? <span className="tag-pick">Our pick</span> : <span className="tag-avail">Available</span>}
+        {/* Both pills sit in the same top-left corner, so only one can show.
+            Status wins over "Our pick": recommending a car nobody can buy is
+            worse than not recommending one at all. */}
+        {car.status && car.status !== "available" ? (
+          <span className={status.tag}>{status.label}</span>
+        ) : car.featured ? (
+          <span className="tag-pick">Our pick</span>
+        ) : (
+          <span className="tag-avail">Available</span>
+        )}
         <span className="tag-year">{car.year}</span>
         <Image
           src={src}

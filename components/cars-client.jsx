@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { lakh } from "@/lib/format";
 import { waLink } from "@/lib/site";
+import { byAvailability } from "@/lib/car-status";
 import CarCard from "@/components/car-card";
 
 const MAX_PRICE = 6000000;
@@ -140,6 +141,10 @@ export default function CarsClient({ cars, settings }) {
 
     const s = sort;
     list = list.slice().sort((a, b) => {
+      // Sold cars stay in the results but never rank above one still for sale,
+      // whichever sort the visitor picked.
+      const avail = byAvailability(a, b);
+      if (avail) return avail;
       if (s === "new") return b.year - a.year;
       if (s === "low") return a.price - b.price;
       if (s === "high") return b.price - a.price;
@@ -149,6 +154,8 @@ export default function CarsClient({ cars, settings }) {
     });
     return list;
   }, [cars, q, model, body, year, maxPrice, sort]);
+
+  const forSale = useMemo(() => filtered.filter((c) => c.status !== "sold").length, [filtered]);
 
   /* reveal animation for cards (re-runs when the filtered list changes) */
   useEffect(() => {
@@ -260,7 +267,10 @@ export default function CarsClient({ cars, settings }) {
       <section>
         <div className="toolbar">
           <div className="count" id="count">
-            <b>{filtered.length}</b> {filtered.length === 1 ? "car" : "cars"} available
+            {/* The list now includes sold cars, so a flat "N cars available"
+                would overcount the stock someone can actually buy. */}
+            <b>{filtered.length}</b> {filtered.length === 1 ? "car" : "cars"}
+            {forSale === filtered.length ? " available" : ` · ${forSale} available`}
           </div>
           <div className="tools">
             <button className="btn btn-line btn-sm filter-toggle" id="openFilters" onClick={() => setRailOpen(true)}>

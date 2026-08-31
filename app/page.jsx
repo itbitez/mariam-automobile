@@ -4,6 +4,7 @@ import { HOME_LIMIT } from "@/lib/data";
 import { SITE, waLink, telLink, mapsLink } from "@/lib/site";
 import { lakh } from "@/lib/format";
 import { getCars, getHome, getSettings, getCalc } from "@/lib/query";
+import { byAvailability } from "@/lib/car-status";
 import HomeClient from "@/components/home-client";
 import WaGlyph from "@/components/wa-glyph";
 import SiteFooter from "@/components/site-footer";
@@ -60,8 +61,12 @@ const EYE_ICON = (
 export default async function HomePage() {
   const [cars, home, settings, calc] = await Promise.all([getCars(), getHome(), getSettings(), getCalc()]);
   const site = { ...SITE, ...settings };
-  const homeCars = cars.filter((c) => c.showHome && c.status === "available").slice(0, HOME_LIMIT);
-  // Everything still for sale, newest first — drives the enquiry form dropdown.
+  // Sold and reserved cars stay on the site with a badge, so status no longer
+  // gates this grid — only the owner's show-on-home flag. Sorting available
+  // first means they claim the limited slots before anything unbuyable does.
+  const homeCars = cars.filter((c) => c.showHome).sort(byAvailability).slice(0, HOME_LIMIT);
+  // Still deliberately excludes sold: this drives the enquiry dropdown and the
+  // "cars in stock" count, and neither should offer a car nobody can buy.
   const listedCars = cars.filter((c) => c.status !== "sold");
   const totalCars = listedCars.length;
 

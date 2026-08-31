@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { lakh } from "@/lib/format";
 import { PLACEHOLDER_IMG } from "@/lib/data";
+import { carStatus } from "@/lib/car-status";
 
 const ARROW = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -15,10 +16,15 @@ const ARROW = (
 export default function SimilarCard({ car, i }) {
   const [failed, setFailed] = useState(false);
   const delay = { transitionDelay: Math.min(i, 5) * 0.05 + "s" };
+  const sold = car.status === "sold";
+  const status = carStatus(car.status);
 
   return (
-    <Link className="car rv" href={`/cars/${car.id}`} style={delay}>
+    <Link className={sold ? "car rv car-sold" : "car rv"} href={`/cars/${car.id}`} style={delay}>
       <div className="car-photo">
+        {/* Unlike the main card this one carries no pill when a car is for
+            sale, so only a non-available status needs saying. */}
+        {car.status && car.status !== "available" && <span className={status.tag}>{status.label}</span>}
         <span className="tag-year">{car.year}</span>
         <Image
           src={failed ? PLACEHOLDER_IMG : car.photos[0]}

@@ -5,6 +5,7 @@ import { PLACEHOLDER_IMG } from "@/lib/data";
 import { SITE, waLink, telLink, mapsLink } from "@/lib/site";
 import { lakh } from "@/lib/format";
 import { getCarById, getCarIds, getListingCars, getSettings, getCalc } from "@/lib/query";
+import { carStatus } from "@/lib/car-status";
 import CarGallery from "@/components/car-gallery";
 import EmiCalc from "@/components/emi-calc";
 import DetailChrome from "@/components/detail-chrome";
@@ -123,12 +124,21 @@ export default async function CarPage({ params }) {
   const site = { ...SITE, ...settings };
 
   const name = `${car.brand} ${car.title} ${car.year}`;
+  const status = carStatus(car.status);
+  // A sold car still gets enquiries — it is usually what someone bookmarked or
+  // found through search. Asking "is it still available?" about something the
+  // page already says is sold wastes the lead, so point it at the next car
+  // instead of pretending.
   const waAsk = waLink(
-    `Hi Mariam Automobile, I'm interested in the ${name} listed at ${lakh(car.price)}. Is it still available?`,
+    car.status === "sold"
+      ? `Hi Mariam Automobile, I saw the ${name} is sold. Do you have anything similar coming in?`
+      : `Hi Mariam Automobile, I'm interested in the ${name} listed at ${lakh(car.price)}. Is it still available?`,
     site
   );
+  // Sold cars stay listed, but recommending one under "similar cars" would send
+  // a ready buyer to another dead end.
   const sim = listing
-    .filter((c) => c.id !== car.id)
+    .filter((c) => c.id !== car.id && c.status !== "sold")
     .sort((a, b) => {
       const sa = (a.body === car.body ? 2 : 0) + (a.brand === car.brand ? 1 : 0) - Math.abs(a.price - car.price) / 10000000;
       const sb = (b.body === car.body ? 2 : 0) + (b.brand === car.brand ? 1 : 0) - Math.abs(b.price - car.price) / 10000000;
@@ -187,8 +197,8 @@ export default async function CarPage({ params }) {
             </em>
           </div>
           <div className="badges fade-up" id="badges">
-            <span className="badge on">Available now</span>
-            {car.featured ? <span className="badge hot">Our pick</span> : null}
+            <span className={`badge ${status.badge}`}>{status.headline}</span>
+            {car.featured && car.status !== "sold" ? <span className="badge hot">Our pick</span> : null}
             <span className="badge">{car.condition}</span>
             <span className="badge">{car.auction}</span>
           </div>

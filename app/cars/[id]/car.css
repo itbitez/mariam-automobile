@@ -334,6 +334,42 @@
     color: #fff;
   }
 
+  /* Reserved and sold. Both sit against the dark header photo, so they carry
+     their own solid fill like .badge.on rather than the outlined default. */
+  .badge.held {
+    background: #ffe0a3;
+    border-color: transparent;
+    color: #4a2c00;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .badge.held::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #b45309;
+  }
+
+  .badge.gone {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: transparent;
+    color: #10161d;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .badge.gone::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6b7280;
+  }
+
   .detail-head h1 {
     color: #fff;
     font-size: clamp(32px, 4.8vw, 56px);
@@ -457,10 +493,15 @@
     border-radius: 999px;
   }
 
+  /* Was a single row of equal columns, which only worked because the gallery
+     was capped at four photos — twelve would have squeezed each thumb to about
+     70px. auto-fit keeps the old look for four or fewer (empty tracks collapse
+     and the thumbs stretch to fill the row) and wraps to a second row beyond
+     that, so any number of photos stays legible without hiding some off-screen
+     behind a horizontal scroll. */
   .g-thumbs {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
     gap: 14px;
   }
 

@@ -569,7 +569,12 @@ nav.scrolled .mnav-burger i { background: #0d1218; }
   transform: translateX(120%);
 }
 
-.tag-avail {
+/* The three status pills share everything but their colour. A sold or reserved
+   car keeps its place in the grid now, so this pill is the only thing telling a
+   customer why they cannot buy it — see lib/car-status.js. */
+.tag-avail,
+.tag-reserved,
+.tag-sold {
   position: absolute;
   top: 14px;
   left: 14px;
@@ -579,8 +584,6 @@ nav.scrolled .mnav-burger i { background: #0d1218; }
   letter-spacing: 0.13em;
   text-transform: uppercase;
   font-weight: 700;
-  color: #05300f;
-  background: #b9f6cd;
   padding: 6px 11px;
   border-radius: 999px;
   display: flex;
@@ -588,12 +591,51 @@ nav.scrolled .mnav-burger i { background: #0d1218; }
   gap: 6px;
 }
 
-.tag-avail::before {
+.tag-avail::before,
+.tag-reserved::before,
+.tag-sold::before {
   content: "";
   width: 6px;
   height: 6px;
   border-radius: 50%;
+}
+
+.tag-avail {
+  color: #05300f;
+  background: #b9f6cd;
+}
+
+.tag-avail::before {
   background: #16a34a;
+}
+
+.tag-reserved {
+  color: #4a2c00;
+  background: #ffe0a3;
+}
+
+.tag-reserved::before {
+  background: #b45309;
+}
+
+.tag-sold {
+  color: #fff;
+  background: rgba(16, 22, 29, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.tag-sold::before {
+  background: #9aa4b0;
+}
+
+/* Muted so a sold car reads as sold at a glance while scanning the grid,
+   without the badge having to do all the work on its own. */
+.car-sold .car-photo img {
+  filter: saturate(0.35) brightness(0.9);
+}
+
+.car-sold:hover .car-photo img {
+  filter: saturate(0.6) brightness(0.95);
 }
 
 .tag-pick {

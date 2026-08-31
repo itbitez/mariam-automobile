@@ -9,11 +9,16 @@ function pad(n) {
 }
 
 export default function CarGallery({ car }) {
-  const shots = car.photos.slice(0, 4);
+  // Every photo, not the first four. The cap silently discarded whatever an
+  // owner uploaded past the fourth image, with nothing on the page or in the
+  // admin panel to say so — a car with twelve photos showed four and read as
+  // an upload that had failed. The thumbnail strip wraps instead (car.css).
+  const shots = (car.photos || []).filter(Boolean);
   const [gi, setGi] = useState(0);
   const [failed, setFailed] = useState({});
 
   function showShot(i) {
+    if (!shots.length) return;
     setGi((i + shots.length) % shots.length);
   }
 
@@ -26,7 +31,9 @@ export default function CarGallery({ car }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [gi, shots.length]);
 
-  const mainSrc = failed[gi] ? PLACEHOLDER_IMG : shots[gi];
+  // A car with no photos at all would otherwise hand next/image an undefined
+  // src, which throws and takes the whole page down.
+  const mainSrc = failed[gi] || !shots[gi] ? PLACEHOLDER_IMG : shots[gi];
 
   return (
     <div className="gallery">
@@ -53,7 +60,7 @@ export default function CarGallery({ car }) {
             </button>
           </div>
           <div className="g-index">
-            {pad(gi + 1)} / {pad(shots.length)}
+            {pad(Math.min(gi + 1, shots.length || 1))} / {pad(shots.length || 1)}
           </div>
         </div>
       </div>
@@ -71,7 +78,7 @@ export default function CarGallery({ car }) {
                 src={failed[i] ? PLACEHOLDER_IMG : k}
                 alt=""
                 fill
-                sizes="(max-width: 780px) 25vw, 250px"
+                sizes="(max-width: 780px) 33vw, 140px"
                 onError={() => setFailed((f) => ({ ...f, [i]: true }))}
               />
             </button>
