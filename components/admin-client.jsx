@@ -692,11 +692,14 @@ export default function AdminClient() {
         </nav>
 
         <div className="side-foot">
-          {session?.user?.email && (
+          {/* session is the admin row itself ({ id, email }), not a Supabase
+              session wrapper — session.user is left over from the old shape and
+              was always undefined, so this block never rendered. */}
+          {session?.email && (
             <div className="side-user">
-              <span className="av">{session.user.email.slice(0, 2)}</span>
+              <span className="av">{session.email.slice(0, 2)}</span>
               <span className="who">
-                <b>{session.user.email}</b>
+                <b>{session.email}</b>
                 Signed in
               </span>
             </div>

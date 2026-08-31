@@ -30,6 +30,18 @@ export const POST = open(async (req) => {
 
   const user = await q1("SELECT id, email, password_hash FROM admin_users WHERE email = ?", [email]);
 
+  // A stored hash that does not parse means the row was hand-edited or the
+  // value was truncated on paste — not that the password is wrong. The client
+  // still gets the same 401 (saying more would leak which emails exist), but
+  // without this line the two are indistinguishable and the account looks
+  // simply "broken" with no way to tell why.
+  if (user && !/^scrypt:[0-9a-f]{32}:[0-9a-f]{128}$/.test(user.password_hash || "")) {
+    console.warn(
+      `[auth] password_hash for ${email} is malformed (length ${String(user.password_hash || "").length}, expected 168). ` +
+        `No password can match it. Reset with: npm run admin:create -- ${email} "new-password"`
+    );
+  }
+
   // Same message and rough timing whether the account is missing or the
   // password is wrong, so this cannot be used to enumerate valid emails.
   const good = user ? await verifyPassword(password, user.password_hash) : await verifyPassword(password, "scrypt:00:00");
